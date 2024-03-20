@@ -14,7 +14,7 @@ pipeline {
                 }
             } 
         }
-        stage('Manage Docker Container - prior condition posgres db need to be up') {
+        stage('Manage Docker Container - prior condition posgres db need to be up ') {
             steps {
                 script {
                         withCredentials([usernamePassword(credentialsId: 'docker-idubi' , usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
