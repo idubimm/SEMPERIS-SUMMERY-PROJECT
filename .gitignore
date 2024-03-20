@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+/venv/
+/node_modules/
+*.py[cod]
+*.log
+*.sqlite3
+*.pyc
+*.pyo
+*.pyd
+*.swp
+/.history/
+resources/
+postgres/
+/ignore/
+
+# Docker
+.docker/
+.DS_Store
+docker-compose.override.yml
+
+# Jenkins
+target/
+*.class
+*.war
+*.jar
+*.hpi
+*.pom
+*.log
+*.tmp
+work/
+aws/static-website-example-master/
+aws/static-website-example-master/test  
+
+# terraform
+*/.terraform/*
+*.lock
+*.lock.*
+terraform.tfsafe
+.history
+terraform/.terraform/
+*.exe
+.terraform
+.terraform/
+
+

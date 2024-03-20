@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  namespace: flaskapp-python
+spec:
+  selector:
+    matchLabels: 
+      app: web-app
+  replicas: 3  # Set to 3 for three replicas of the web application
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+      - name: web-app
+        image: idubi/flask-app:lts
+        env:
+        - name: DB_USER
+          value: "idubi"
+        - name: DB_PASSWORD
+          value: "idubi"
+        - name: DB_NAME
+          value: "idubi"
+        - name: DB_TYPE
+          value: "postgresql"
+        - name: DB_HOST
+          value: "postgres-db"
+        - name: DB_PORT
+          value: "5432"
+        ports:
+        - containerPort: 5000
