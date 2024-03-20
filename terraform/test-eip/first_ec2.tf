@@ -12,6 +12,16 @@ resource "aws_instance" "my-ubuntu-t2-micro" {
     }
 }
 
+resource "aws_eip" "example" {
+    domain="vpc"  
+}
+
+resource "aws_eip_association" "aip_assoc" {
+    instance_id = aws_instance.my-ubuntu-t2-micro.id  
+    allocation_id = aws_eip.example.id
+}
+
+
 output "public_ip" {
     value = aws_instance.my-ubuntu-t2-micro.public_ip
 }
