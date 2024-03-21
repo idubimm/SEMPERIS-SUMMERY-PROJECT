@@ -101,14 +101,13 @@ def get_repo_tags_json(repo_name , user)  :
         return {}
       
 def parse_json_to_tags_list(repo_json):
-    result_list = [
-        {
-            "id": item["id"],
-            "push_date": item["tag_last_pushed"],
-            "last_pulled": item["tag_last_pulled"],
-            "tag_name":item["name"]
-        }
-    ]
+    result_list = []
+    # {
+    #     "id": item["id"],
+    #     "push_date": item["tag_last_pushed"],
+    #     "last_pulled": item["tag_last_pulled"],
+    #     "tag_name":item["name"]
+    # }]
     for item in repo_json["results"]:
         if item["name"] != LATEST_TAG_NAME:
             result_list.append(item)
