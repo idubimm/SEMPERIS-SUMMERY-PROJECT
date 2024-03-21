@@ -76,7 +76,7 @@ pipeline {
                         echo " DOCKER_USERNAME ---> $DOCKER_USERNAME"
 
                         #                   [1. domain]   [2. app name]     [3.dockerfile path]
-                        build_docker_image   $DOMAIN     'flask-crud'       './src/' 
+                        echo `build_docker_image  $DOCKER_USERNAME $DOCKER_PASSWORD   $DOMAIN     'flask-crud'       './src/'`
                         // build_docker_image   'idubi'      'flask-crud'       './src/' 
                         
                     '''

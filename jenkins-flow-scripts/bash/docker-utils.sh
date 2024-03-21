@@ -120,9 +120,11 @@ cleanup_old_local_repo() {
 }
 
 build_docker_image() {
-    DOMAIN=$1
-    REPONAME=$2
-    PATHTODOCKERFILE=$3
+    USER=$1
+    PASSWORD=$2 
+    DOMAIN=$3
+    REPONAME=$4
+    PATHTODOCKERFILE=$5
     
     verify_docker_login  $USER $PASSWORD
     cleanup_old_local_repo $DOMAIN $REPONAME
