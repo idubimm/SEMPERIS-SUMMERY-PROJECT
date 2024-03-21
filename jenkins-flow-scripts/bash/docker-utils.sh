@@ -119,7 +119,7 @@ cleanup_old_local_repo() {
     fi
 }
 
-build_docker_im"ge() {
+build_docker_image() {
     DOMAIN=$1
     REPONAME=$2
     PATHTODOCKERFILE=$3
