@@ -126,6 +126,7 @@ build_docker_image() {
     REPONAME=$4
     PATHTODOCKERFILE=$5
     
+    
     verify_docker_login  $USER $PASSWORD
     cleanup_old_local_repo $DOMAIN $REPONAME
     echo `docker build -t "$DOMAIN/$REPONAME:lts" $PATHTODOCKERFILE`
