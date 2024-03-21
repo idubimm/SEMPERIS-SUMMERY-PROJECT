@@ -89,6 +89,7 @@ pipeline {
                         //  load docker credentials agin
                         sh '''#!/bin/bash
                             source jenkins-flow-scripts/bash/docker-utils.sh 
+                            echo "$DOMAIN/$REPONAME"
                             #                        [1. compose file path]         [2. docker build name]  [3. compose image prefix]
                             build_docker_compose  'src/docker-compose-image.yml'  "$DOMAIN/$REPONAME:lts"    'flask-compose'
                         '''
