@@ -19,7 +19,7 @@ DOCKER_RESPONSE = {"TOKEN": ""}
 # Buld format : VESION.RELEASE.BUILD
 BUILD_POSITION_4INCREMENTAL_TYPES = {"VERSION": 0, "RELEASE": 1, "BUILD": 2}
 
-LATEST_TAG_NAME = "latest"
+LATEST_TAG_NAME = "lts"
 
 
 def get_docker_login_url():
@@ -227,7 +227,7 @@ def delete_old_images(user, repo_name, control_obj):
         raise Exception(f"faile to delete old builds, details :  \n {failed_list}")
 
     else:
-        #  try to delete 'latest' tag name id exist , if not do nothing
+        #  try to delete <latest(lts currently)> tag name id exist , if not do nothing
         try:
             api_delete_tag_name(user, repo_name, token, LATEST_TAG_NAME)
         except:
