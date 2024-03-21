@@ -22,7 +22,7 @@ BUILD_POSITION_4INCREMENTAL_TYPES = {
     "BUILD": 2    
 }
 
-LATEST_TAG_NAME = "latest"
+LATEST_TAG_NAME = "lts"
 
 def get_docker_login_url() : 
     return DOCKER_ENDPOINTS['API_URL'] + DOCKER_ENDPOINTS['LOGIN']  
@@ -102,15 +102,16 @@ def get_repo_tags_json(repo_name , user)  :
       
 def parse_json_to_tags_list(repo_json):
     result_list = [
-    {
-        "id": item["id"],
-        "push_date": item["tag_last_pushed"],
-        "last_pulled": item["tag_last_pulled"],
-        "tag_name":item["name"]
-    }
-    for item in repo_json["results"]
-    if item["name"] != LATEST_TAG_NAME
+        {
+            "id": item["id"],
+            "push_date": item["tag_last_pushed"],
+            "last_pulled": item["tag_last_pulled"],
+            "tag_name":item["name"]
+        }
     ]
+    for item in repo_json["results"]:
+        if item["name"] != LATEST_TAG_NAME:
+            result_list.append(item)
     return  result_list
 
 def evaluate_tag_name(tag_name) : 
