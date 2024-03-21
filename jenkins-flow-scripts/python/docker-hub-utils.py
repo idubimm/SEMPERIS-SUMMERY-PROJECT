@@ -22,7 +22,7 @@ BUILD_POSITION_4INCREMENTAL_TYPES = {
     "BUILD": 2    
 }
 
-LATEST_TAG_NAME = "lts"
+LATEST_TAG_NAME = "latest"
 
 def get_docker_login_url() : 
     return DOCKER_ENDPOINTS['API_URL'] + DOCKER_ENDPOINTS['LOGIN']  
@@ -101,16 +101,16 @@ def get_repo_tags_json(repo_name , user)  :
         return {}
       
 def parse_json_to_tags_list(repo_json):
-    result_list = []
-    # {
-    #     "id": item["id"],
-    #     "push_date": item["tag_last_pushed"],
-    #     "last_pulled": item["tag_last_pulled"],
-    #     "tag_name":item["name"]
-    # }]
-    for item in repo_json["results"]:
-        if item["name"] != LATEST_TAG_NAME:
-            result_list.append(item)
+    result_list = [
+    {
+        "id": item["id"],
+        "push_date": item["tag_last_pushed"],
+        "last_pulled": item["tag_last_pulled"],
+        "tag_name":item["name"]
+    }
+    for item in repo_json["results"]
+    if item["name"] != LATEST_TAG_NAME
+    ]
     return  result_list
 
 def evaluate_tag_name(tag_name) : 
@@ -164,7 +164,7 @@ def delete_old_images(user,repo_name,control_obj):
        print (f'deleting old build : {tag_name} ')
        response = api_delete_tag_name(user,repo_name,token,tag_name)
        if response.status_code!=204:
-           failed_list.push({"tag_name":f'{tag_name}',"status_code":f'response.status_code' , "reason":f'{response.reason}'})
+           failed_list.append({"tag_name":f'{tag_name}',"status_code":f'response.status_code' , "reason":f'{response.reason}'})
        else: 
            print (f'{tag_name} deleted successfuly ')
            
@@ -196,8 +196,24 @@ def push_docker_repo_to_hub(repo_name , user , password,build_incremental_type,n
                 raise Exception ('falied to delete old images')
         else:
             raise Exception ('failed to login to dockerhub with {user} ' )
+
+ 
+
+# TO_DO_LEVEL-5:
+# will be in next tests (nect assignment to add tests)
+# increase_build_tag("35.0.1","VERSION")
+# increase_build_tag("3.40.0","VERSION")
+# increase_build_tag("10.4.0","VERSION")
+# increase_build_tag("3.0.0","VERSION")
+# increase_build_tag("0.10.9","RELEASE")
+# increase_build_tag("2.10.9","RELEASE")
+# increase_build_tag("0.4.5","RELEASE")
+# increase_build_tag("0.0.0","BUILD")
+# increase_build_tag("0.0.9","BUILD")
+# increase_build_tag("0.10.10","BUILD")
+
  
 arg = sys.argv
 
-# this file is executed with this parameters from jenklins , also a debug file exist with execution params
+#this file is executed with this parameters from jenklins , also a debug file exist with execution params
 push_docker_repo_to_hub(user=arg[1] , password=arg[2] , repo_name=arg[3] , build_incremental_type=arg[4], number_builds_2keep=arg[5])

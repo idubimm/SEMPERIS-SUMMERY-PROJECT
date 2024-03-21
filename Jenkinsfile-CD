@@ -6,6 +6,7 @@ properties([  parameters([choice(choices: ['BUILD', 'RELEASE', 'VERSION'], descr
                              according to the type we increase each thime the number of build''', name: 'BUILD_TYPE'), 
                           string(defaultValue: '4', description: 'how many last builds to keep in the docker hub', name: 'BUILD_KEEP_RETENTION', trim: true),
                           string(defaultValue: 'flask-crud', description: 'repository name', name: 'REPONAME', trim: true),
+                          string(defaultValue: 'idubi', description: 'repository domain', name: 'DOMAIN', trim: true)
                         ])
 
             ])
@@ -19,7 +20,7 @@ pipeline {
                     sh '''
                     chmod -R +x ./jenkins-flow-scripts/python
                     pip install -r jenkins-flow-scripts/python/requirements.txt
-                    python ./jenkins-flow-scripts/python/docker-hub-utils.py $DOCKER_USERNAME $DOCKER_PASSWORD ${REPONAME} ${BUILD_TYPE} ${BUILD_KEEP_RETENTION}
+                    python ./jenkins-flow-scripts/python/docker-hub-utils.py $DOCKER_USERNAME $DOCKER_PASSWORD $REPONAME $BUILD_TYPE $BUILD_KEEP_RETENTION
                     '''
                      }} 
                   }
