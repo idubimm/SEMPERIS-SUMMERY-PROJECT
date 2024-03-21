@@ -20,7 +20,7 @@ pipeline {
                     sh '''
                     pip install -r jenkins-flow-scripts/python/requirements.txt
 
-                    echo " ---->  ${BUILD_TYPE}"
+                    echo " ---->  ${DOMAIN}/${REPONAME}"
 
                     // echo " --> ./jenkins-flow-scripts/python/docker-hub-utils.py $DOCKER_USERNAME $DOCKER_PASSWORD ($env.domain/$env.reponame) $env.BUILD_TYPE $env.BUILD_KEEP_RETENTION"
                     python ./jenkins-flow-scripts/python/docker-hub-utils.py $DOCKER_USERNAME $DOCKER_PASSWORD $env.domain/$env.reponame $env.BUILD_TYPE $env.BUILD_KEEP_RETENTION
