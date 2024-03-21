@@ -19,8 +19,8 @@ pipeline {
                 script {
                         withCredentials([usernamePassword(credentialsId: 'docker-idubi' , usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                     sh '''#!/bin/bash
-                                          chmod -R +x ./scripts
-                                          source scripts/docker-utils.sh 
+                                          chmod -R +x ./jenkins-flow-scripts
+                                          source jenkins-flow-scripts/bash/docker-utils.sh 
                                           # [1. container name]  [2. image name]  [3. docker run command if no container] [4,5 - docker credentials]
                                           prepare_docker_container "postgres-idubi" \
                                                   "postgres"  \
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 script {
                         sh '''#!/bin/bash
-                            source scripts/test-flask-app.sh
+                            source jenkins-flow-scripts/bash/test-flask-app.sh
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
                             validate_flask_in_loop "http://127.0.0.1:5000"     5               1  
                             # kill the application after test completed
@@ -63,7 +63,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'docker-idubi' , usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) 
                     {
                     sh '''#!/bin/bash
-                        source scripts/docker-utils.sh 
+                        source jenkins-flow-scripts/bash/docker-utils.sh 
                         # since we are connecting to the db in docker compose with same port as the db , 
                         # and we open it for tests in host - we need to stop db (port is already allocated error)
                         #               [1.  container name ]
@@ -82,7 +82,7 @@ pipeline {
                         //  we allready arive here after logged into docker so no need to 
                         //  load docker credentials agin
                         sh '''#!/bin/bash
-                            source scripts/docker-utils.sh 
+                            source jenkins-flow-scripts/bash/docker-utils.sh 
                             #                        [1. compose file path]         [2. docker build name]  [3. compose image prefix]
                             build_docker_compose  'src/docker-compose-image.yml'  'idubi/flask-crud:lts'    'flask-compose'
                         '''
@@ -94,10 +94,10 @@ pipeline {
             steps {
                 script {
                         sh '''#!/bin/bash
-                            source scripts/test-flask-app.sh
+                            source jenkins-flow-scripts/bash/test-flask-app.sh
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
                             validate_flask_in_loop "http://127.0.0.1:5000"     5               1  
-                            source scripts/docker-utils.sh
+                            source jenkins-flow-scripts/bash/docker-utils.sh
                             stop_docker_compose 'src/docker-compose-image.yml' 'idubi/flask-crud:lts'    'flask-compose'
                         '''                        
                 }
@@ -108,7 +108,7 @@ pipeline {
             always  {  
                   script {    
                         sh '''#!/bin/bash
-                            source scripts/docker-utils.sh  
+                            source jenkins-flow-scripts/bash/docker-utils.sh  
                             stop_docker_compose 'src/docker-compose-image.yml'  'idubi/flask-crud:lts'    'flask-compose'      
                             stop_container 'postgres-idubi'
                             stop_container 'flask-compose-web-app'

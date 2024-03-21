@@ -100,13 +100,32 @@ prepare_docker_container() {
     return 0
 }
 
-build_docker_image() {
+
+cleanup_old_local_repo() {
+    DOMAIN=$1
+    REPONAME=$2
+    
+
+    containerExists=$(docker ps -a --format "{{.Image}}" | grep "world-of-games")
+    if [ ! -z "$containerExists" ]; then
+        docker rm -f $REPONAME
+        docker rmi -f $(docker images "$REPONAME" -q)
+    fi
+
+    # Check if the repository image exists
+    repoExists=$(docker images | grep "$DOMAIN/$REPONAME")
+    if [ ! -z "$repoExists" ]; then
+        docker rmi -f $(docker images "$DOMAIN/$REPONAME" -q)
+    fi
+"
+
+build_docker_im"ge() {
     DOMAIN=$1
     REPONAME=$2
     PATHTODOCKERFILE=$3
     
     verify_docker_login  $USER $PASSWORD
-    echo `docker rmi -f   "$DOMAIN/$REPONAME:lts"`
+    cleanup_old_local_repo $DOMAIN $REPONAME
     echo `docker build -t "$DOMAIN/$REPONAME:lts" $PATHTODOCKERFILE`
 
 } 
