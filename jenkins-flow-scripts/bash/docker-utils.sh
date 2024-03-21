@@ -131,9 +131,13 @@ build_docker_image() {
     echo "DOMAIN           ---> $DOMAIN          "
     echo "REPONAME         ---> $REPONAME        "
     echo "PATHTODOCKERFILE ---> $PATHTODOCKERFILE"
+
+
+    echo "DOMAIN/REPONAME:lts"  --> $DOMAIN/$REPONAME:lts"
     
     verify_docker_login  $USER $PASSWORD
     cleanup_old_local_repo $DOMAIN $REPONAME
+    
     echo `docker build -t "$DOMAIN/$REPONAME:lts" $PATHTODOCKERFILE`
 
 } 
