@@ -18,12 +18,9 @@ pipeline {
             steps {
                 script {withCredentials([usernamePassword(credentialsId: 'docker-idubi' , usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh '''
+                    chmod -R +x ./jenkins-flow-scripts/python
                     pip install -r jenkins-flow-scripts/python/requirements.txt
-
-                    echo " ---->  ${DOMAIN}/${REPONAME}"
-
-                    // echo " --> ./jenkins-flow-scripts/python/docker-hub-utils.py $DOCKER_USERNAME $DOCKER_PASSWORD ($env.domain/$env.reponame) $env.BUILD_TYPE $env.BUILD_KEEP_RETENTION"
-                    python ./jenkins-flow-scripts/python/docker-hub-utils.py $DOCKER_USERNAME $DOCKER_PASSWORD $env.domain/$env.reponame $env.BUILD_TYPE $env.BUILD_KEEP_RETENTION
+                    python ./jenkins-flow-scripts/python/docker-hub-utils.py $DOCKER_USERNAME $DOCKER_PASSWORD ${DOMAIN}/${REPONAME} ${BUILD_TYPE} ${BUILD_KEEP_RETENTION}
                     '''
                      }} 
                   }

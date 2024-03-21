@@ -19,7 +19,7 @@ pipeline {
                 script {
                         withCredentials([usernamePassword(credentialsId: 'docker-idubi' , usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                     sh '''#!/bin/bash
-                                          chmod -R +x ./jenkins-flow-scripts
+                                          chmod -R +x ./jenkins-flow-scripts/bash
                                           source jenkins-flow-scripts/bash/docker-utils.sh 
                                           # [1. container name]  [2. image name]  [3. docker run command if no container] [4,5 - docker credentials]
                                           prepare_docker_container "postgres-idubi" \
