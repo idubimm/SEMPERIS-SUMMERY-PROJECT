@@ -117,7 +117,7 @@ cleanup_old_local_repo() {
     if [ ! -z "$repoExists" ]; then
         docker rmi -f $(docker images "$DOMAIN/$REPONAME" -q)
     fi
-"
+}
 
 build_docker_im"ge() {
     DOMAIN=$1
