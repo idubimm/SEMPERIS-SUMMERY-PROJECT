@@ -106,7 +106,7 @@ cleanup_old_local_repo() {
     REPONAME=$2
     
 
-    containerExists=$(docker ps -a --format "{{.Image}}" | grep "world-of-games")
+    containerExists=$(docker ps -a --format "{{.Image}}" | grep "$REPONAME")
     if [ ! -z "$containerExists" ]; then
         docker rm -f $REPONAME
         docker rmi -f $(docker images "$REPONAME" -q)
@@ -119,7 +119,7 @@ cleanup_old_local_repo() {
     fi
 }
 
-build_docker_im"ge() {
+build_docker_image() {
     DOMAIN=$1
     REPONAME=$2
     PATHTODOCKERFILE=$3
