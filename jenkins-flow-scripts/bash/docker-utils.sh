@@ -126,6 +126,11 @@ build_docker_image() {
     REPONAME=$4
     PATHTODOCKERFILE=$5
     
+    echo "USER"
+    echo "PASSWORD"
+    echo "DOMAIN"
+    echo "REPONAME"
+    echo "PATHTODOCKERFILE"
     
     verify_docker_login  $USER $PASSWORD
     cleanup_old_local_repo $DOMAIN $REPONAME
