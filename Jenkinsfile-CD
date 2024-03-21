@@ -6,7 +6,6 @@ properties([  parameters([choice(choices: ['BUILD', 'RELEASE', 'VERSION'], descr
                              according to the type we increase each thime the number of build''', name: 'BUILD_TYPE'), 
                           string(defaultValue: '4', description: 'how many last builds to keep in the docker hub', name: 'BUILD_KEEP_RETENTION', trim: true),
                           string(defaultValue: 'flask-crud', description: 'repository name', name: 'REPONAME', trim: true),
-                          string(defaultValue: 'idubi', description: 'repository domain', name: 'DOMAIN', trim: true)
                         ])
 
             ])
