@@ -92,7 +92,7 @@ pipeline {
                         sh '''#!/bin/bash
                             source jenkins-flow-scripts/bash/docker-utils.sh 
                             #                        [1. compose file path]         [2. docker build name]  [3. compose image prefix]
-                            build_docker_compose  'src/docker-compose-image.yml'  $DOMAIN/$REPONAME:lts    $REPONAME
+                            build_docker_compose  'src/docker-compose-image.yml'  $DOMAIN/$REPONAME:lts    "$REPONAME-compose"
                         '''
                 }
             }
