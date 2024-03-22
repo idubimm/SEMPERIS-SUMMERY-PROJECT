@@ -138,7 +138,7 @@ build_docker_image() {
     verify_docker_login  $USER $PASSWORD
     cleanup_old_local_repo $DOMAIN $REPONAME
     
-    docker build -t "$DOMAIN"/"$REPONAME":lts "$PATHTODOCKERFILE"
+    docker build -t "$REPONAME":lts "$PATHTODOCKERFILE"
 } 
 
 build_docker_compose() {
