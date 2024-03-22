@@ -10,10 +10,8 @@ DOCKER_ENDPOINTS = {
     "REPO_TAGS": "namespaces/{user}/repositories/{repo_name}/tags",
     "REPO_DELETE_TAG": "repositories/{user}/{repo_name}/tags/{tag_name}",
 }
-
+EMPTY_TAG_NAME = "0.0.0"
 DOCKER_RESPONSE = {"TOKEN": ""}
-# # if no value exist in repo - this will be the next one ...
-# NEW_ARRAY=['0','0','0']
 
 
 # Buld format : VESION.RELEASE.BUILD
@@ -160,9 +158,12 @@ def get_list_of_tags_to_delete(repository_tags, number_builds_2keep):
 def get_next_tagname_and_tags_2delete(
     repository_tags, build_incremental_type, number_builds_2keep
 ):
-    max_tag_name = repository_tags and get_last_build_tag(
-        repository_tags
-    )  # or NEW_ARRAY
+    max_tag_name = ""
+    if len(repository_tags) > 0:
+        max_tag_name = get_last_build_tag(repository_tags)
+    else:
+        max_tag_name = EMPTY_TAG_NAME
+
     next_tag_name = increase_build_tag(max_tag_name, build_incremental_type)
     tags_to_delete = get_list_of_tags_to_delete(repository_tags, number_builds_2keep)
     return {"next_tag_name": next_tag_name, "tags_to_delete": tags_to_delete}
@@ -176,26 +177,20 @@ def get_repo_name_latest_tag(user, repo_name):
     return get_repo_name_with_tag(user, repo_name, LATEST_TAG_NAME)
 
 
+#  this command comes with no try exept since if fail - it will be in the responce status
+def execute_subprocess_command(command):
+    return subprocess.run(
+        command, shell=True, capture_output=True, text=True, check=True
+    )
+
+
 def create_docker_image_tag_for_push(user, repo_name, tag):
     tag_name = get_repo_name_with_tag(user, repo_name, tag)
     tag_name_lts = get_repo_name_latest_tag(user, repo_name)
-    subprocess.run(
-        f"docker tag {repo_name} {tag_name} ",
-        shell=True,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    subprocess.run(
-        f"docker tag {repo_name} {tag_name_lts} ",
-        shell=True,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    pushed_image = subprocess.run(
-        f"docker push {tag_name}", shell=True, capture_output=True
-    )
+    local_image_tag_name = f"{user}/{repo_name}:{LATEST_TAG_NAME}"
+    execute_subprocess_command(f"docker tag {local_image_tag_name} {tag_name} ")
+    execute_subprocess_command(f"docker tag {local_image_tag_name} {tag_name_lts} ")
+    pushed_image = execute_subprocess_command(f"docker push {tag_name}")
     if pushed_image.returncode == 0:
         print(f"{tag_name} was pushed to repository {user}/{repo_name}")
         return True
@@ -262,10 +257,8 @@ def push_docker_repo_to_hub(
             user, repo_name, control_obj["next_tag_name"]
         ):
             if delete_old_images(user, repo_name, control_obj):
-                pushed_image = subprocess.run(
-                    check=f"docker push {get_repo_name_latest_tag(user,repo_name)}",
-                    shell=True,
-                    capture_output=True,
+                pushed_image = execute_subprocess_command(
+                    f"docker push {get_repo_name_latest_tag(user,repo_name)}"
                 )
         else:
             raise Exception("falied to delete old images")
@@ -274,7 +267,7 @@ def push_docker_repo_to_hub(
 
 
 # TO_DO_LEVEL-5:
-# will be in next tests (nect assignment to add tests)
+# will be in next tests (next assignment to add tests)
 # increase_build_tag("35.0.1","VERSION")
 # increase_build_tag("3.40.0","VERSION")
 # increase_build_tag("10.4.0","VERSION")
@@ -290,8 +283,7 @@ def push_docker_repo_to_hub(
 arg = sys.argv
 
 # this file is executed with this parameters from jenklins , also a debug file exist with execution params
-push_docker_repo_to_hub(user=arg[1] , password=arg[2] , repo_name=arg[3] , build_incremental_type=arg[4], number_builds_2keep=arg[5])
-
+# push_docker_repo_to_hub(user=arg[1] , password=arg[2] , repo_name=arg[3] , build_incremental_type=arg[4], number_builds_2keep=arg[5])
 
 # push_docker_repo_to_hub(
 #     user="idubi",
@@ -300,3 +292,11 @@ push_docker_repo_to_hub(user=arg[1] , password=arg[2] , repo_name=arg[3] , build
 #     build_incremental_type="BUILD",
 #     number_builds_2keep="4",
 # )
+
+push_docker_repo_to_hub(
+    user="idubi",
+    password="HAnt1989",
+    repo_name="flask-crud",
+    build_incremental_type="BUILD",
+    number_builds_2keep="4",
+)
