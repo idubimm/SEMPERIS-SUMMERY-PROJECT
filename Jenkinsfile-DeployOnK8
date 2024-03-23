@@ -35,6 +35,8 @@ pipeline {
         stage('deploy postgres and its service') {
             steps {
                 script {
+                    echo 'STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
                     sh 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml'
                 }
             }
