@@ -25,12 +25,10 @@ pipeline {
                 }
             }
         }
-
         stage('deploy namespace') {
             steps {
                 script {
                     // Use a shell step to apply your Kubernetes YAML
-                    minikube tunnel
                     sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
                 }
             }
