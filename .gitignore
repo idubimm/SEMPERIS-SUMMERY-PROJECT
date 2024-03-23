@@ -44,4 +44,6 @@ terraform/.terraform/
 .terraform
 .terraform/
 
-
+#bash
+nohup
+nohup*
