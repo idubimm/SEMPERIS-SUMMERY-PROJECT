@@ -1,37 +1,30 @@
-pipeline {
-  agent {kubernetes}
-     stages{
-      stage('deploy namespace ') 
-      {
-        staps{
-          script{
-              sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
-          }
-        }
-      }
-      stage('deploy postgres and its service ')
-      {
-        staps{
-          script{
-              sh 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml'
-          }
-        }
-      }
+---
+|-
+  pipeline 
+  { agent none stages
+    { stage('deploy namespace ') 
+      { agent 
+        { kubernetes 
+          { yamlFile './kubernetes/yaml-files/00-namespace-flask-python.yaml' } 
+        } 
+      } 
+      stage('deploy postgres and its service ') 
+        { agent 
+          { kubernetes 
+            { yamlFile 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml' } 
+          } 
+        } 
       stage('deploy flask app ') 
-      {
-        staps{
-          script{
-              sh 'kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml'
-          }
-        }
-      }
+        { agent 
+          { kubernetes 
+            { yamlFile 'kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml' }
+          } 
+        } 
       stage('deploy LB srvice ') 
-      {
-        staps{
-          script{
-              sh 'kubectl apply -f ./kubernetes/yaml-files/03-services.yaml'
-          }
-        }
-      }      
-    }            
- }
+        { agent 
+          { kubernetes 
+            { yamlFile 'kubectl apply -f ./kubernetes/yaml-files/03-services.yaml' } 
+          } 
+        } 
+      } 
+    }
