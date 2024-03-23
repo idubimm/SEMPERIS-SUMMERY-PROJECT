@@ -1,100 +1,35 @@
 pipeline {
   agent {
-    kubernetes {
-      yaml '''
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: flask-crud-ns                     
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres-db
-  namespace: flask-crud-ns
-spec:
-  selector: 
-    matchLabels:
-      app: postgres-db
-  replicas: 1  # Single replica for the database
-  template:
-    metadata:
-      labels:
-        app: postgres-db
-    spec:
-      containers:
-      - name: postgres-db
-        image: postgres
-        env:
-        - name: POSTGRES_USER
-          value: "idubi"
-        - name: POSTGRES_PASSWORD
-          value: "idubi"
-        - name: POSTGRES_DB
-          value: "idubi"
-        ports:
-        - containerPort: 5432
----        
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: web-app
-  namespace: flask-crud-ns
-spec:
-  selector:
-    matchLabels: 
-      app: web-app
-  replicas: 3  # Set to 3 for three replicas of the web application
-  template:
-    metadata:
-      labels:
-        app: web-app
-    spec:
-      containers:
-      - name: web-app
-        image: idubi/flask-crud:lts
-        env:
-        - name: DB_USER
-          value: "idubi"
-        - name: DB_PASSWORD
-          value: "idubi"
-        - name: DB_NAME
-          value: "idubi"
-        - name: DB_TYPE
-          value: "postgresql"
-        - name: DB_HOST
-          value: "postgres-db"
-        - name: DB_PORT
-          value: "5432"
-        ports:
-        - containerPort: 5000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-db
-  namespace: flask-crud-ns
-spec:
-  selector:
-    app: postgres-db
-  ports:
-    - protocol: TCP 
-      port: 5432
-      targetPort: 5432
----      
-apiVersion: v1
-kind: Service
-metadata:
-  name: web-app
-  namespace: flask-crud-ns
-spec:
-  selector:
-    app: web-app
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
-  type: LoadBalancer
-'''                }
-            }
-}
+    kubernetes
+     }
+     stages{
+      stage{'deploy namespac '
+        staps{
+          script{
+              sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+          }
+        }
+      }
+      stage{'deploy postgres and its service '
+        staps{
+          script{
+              sh 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml'
+          }
+        }
+      }
+      stage{'deploy flask app '
+        staps{
+          script{
+              sh 'kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml'
+          }
+        }
+      }
+      stage{'deploy LB srvice '
+        staps{
+          script{
+              sh 'kubectl apply -f ./kubernetes/yaml-files/03-services.yaml'
+          }
+        }
+      }      
+    }            
+ }

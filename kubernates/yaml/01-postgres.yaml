@@ -25,3 +25,16 @@ spec:
           value: "idubi"
         ports:
         - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db
+  namespace: flaskapp-python
+spec:
+  selector:
+    app: postgres-db
+  ports:
+    - protocol: TCP 
+      port: 5432
+      targetPort: 5432
