@@ -1,6 +1,6 @@
-properties([  parameters([ choice(defaultValue: '1', description: 'web-app replicas (# of pods)', name: 'REPLICAS',
+properties([  parameters([ choice(defaultValue: '1', name: 'REPLICAS',
                                     choices: ['1', '2', '3', '4', '5', '6','7','8'],
-                                    description: 'Select a scale value from 1 to 8 for the web pod'
+                                    description: 'Select a replica count from 1 to 8 for the web pod'
                                 ),
                              booleanParam(
                                     name: 'IS_SHUTDOWN',
