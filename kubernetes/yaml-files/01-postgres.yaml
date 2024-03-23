@@ -1,13 +1,14 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres-db
   namespace: semperis-ns
 spec:
-  selector: 
+  serviceName: "postgres-db"
+  replicas: 1  # Single replica for the database
+  selector:
     matchLabels:
       app: postgres-db
-  replicas: 1  # Single replica for the database
   template:
     metadata:
       labels:
@@ -25,6 +26,17 @@ spec:
           value: "idubi"
         ports:
         - containerPort: 5432
+        volumeMounts:
+        - name: postgres-db-storage
+          mountPath: /var/lib/postgresql/data        
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-db-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
 ---
 apiVersion: v1
 kind: Service

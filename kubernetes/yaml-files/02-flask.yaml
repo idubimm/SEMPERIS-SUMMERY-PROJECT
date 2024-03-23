@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels: 
       app: web-app
-  replicas: 3  # Set to 3 for three replicas of the web application
+  replicas: ^REPLICAS^ 
   template:
     metadata:
       labels:

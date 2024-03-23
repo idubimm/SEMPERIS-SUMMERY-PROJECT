@@ -1,3 +1,16 @@
+properties([  parameters([ choice(defaultValue: '1', description: 'web-app replicas (# of pods)', name: 'REPLICAS',
+                                    choices: ['1', '2', '3', '4', '5', '6','7','8'],
+                                    description: 'Select a scale value from 1 to 8 for the web pod'
+                                ),
+                             booleanParam(
+                                    name: 'IS_SHUTDOWN',
+                                    defaultValue: false,
+                                    description: 'a checkbox to shut down app instead of starting it'
+                                )
+                        
+                        ])
+
+])
 pipeline {
     agent any // Or specify a particular agent configuration
     stages {
@@ -26,10 +39,13 @@ pipeline {
                 }
             }
         }
-        stage('deploy flask app') {
+        stage('deploy flask app with pre selected scale amount') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml'
+                    sh'''
+                    sh "sed -i 's/^REPLICAS^/${REPLICAS}/g' ./kubernetes/yaml-files/02-flask.yaml"
+                    kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml
+                    '''
                 }
             }
         }
@@ -41,16 +57,23 @@ pipeline {
             }
         }
 
-        // stage('delete deployment') {
-        //     steps {
-        //         script {
-        //             sh 'kubectl delete -f ./kubernetes/yaml-files/03-services.yaml'
-        //             sh 'kubectl delete -f ./kubernetes/yaml-files/02-flask.yaml'
-        //             sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
-        //             sh 'kubectl delete -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
-        //         }
-        //     }
-        // }
+        
+
+
+
+        stage('delete deployment') {
+            steps {
+                script {
+                     if (params.IS_SHUTDOWN) {
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/03-services.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/02-flask.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+                     } else {
+                        echo 'Skipping seleting pods due to parameter'
+                     }
+            }
+        }
 
     }
 
