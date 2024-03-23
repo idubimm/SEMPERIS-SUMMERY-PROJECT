@@ -1,10 +1,7 @@
 pipeline {
-
-stage('deploy postgres on K8') {
-            agent {
-                label 'K8 agent'
-                kubernetes {
-yaml '''
+  agent {
+    kubernetes {
+      yaml '''
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -99,6 +96,5 @@ spec:
       targetPort: 5000
   type: LoadBalancer
 '''                }
-                }
             }
 }
