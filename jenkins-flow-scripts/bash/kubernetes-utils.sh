@@ -23,8 +23,8 @@ start_minikube_tunel_if_stopped() {
     fi
 } 
 
-get_ip_and_port_forTunneling(){
+# get_ip_and_port_forTunneling(){
 
-}
+# }
 
 

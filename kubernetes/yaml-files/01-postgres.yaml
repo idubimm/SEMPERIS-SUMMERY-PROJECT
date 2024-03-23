@@ -5,7 +5,7 @@ metadata:
   namespace: semperis-ns
 spec:
   serviceName: "postgres-db"
-  replicas: 1  # Single replica for the database
+  replicas: 2  # Single replica for the database
   selector:
     matchLabels:
       app: postgres-db
