@@ -14,6 +14,18 @@ properties([  parameters([ choice(defaultValue: '1', name: 'REPLICAS',
 pipeline {
     agent any // Or specify a particular agent configuration
     stages {
+        stage('creating tunnel to support load balancer') {
+            steps {
+                script {
+                    sh '''
+                    #!/bin/bash
+                    source jenkins-flow-scripts/bash/kubernetes-utils.sh 
+                    start_minikube_if_down
+                    '''
+                }
+            }
+        }
+
         stage('deploy namespace') {
             steps {
                 script {
