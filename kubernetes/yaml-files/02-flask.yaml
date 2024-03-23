@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-app
-  namespace: flaskapp-python
+  namespace: semperis-ns
 spec:
   selector:
     matchLabels: 
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: web-app
-        image: idubi/flask-app:lts
+        image: idubi/flask-crud:lts
         env:
         - name: DB_USER
           value: "idubi"

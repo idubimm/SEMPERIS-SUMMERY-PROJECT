@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: web-app
-  namespace: flaskapp-python
+  namespace: semperis-ns
 spec:
   selector:
     app: web-app
