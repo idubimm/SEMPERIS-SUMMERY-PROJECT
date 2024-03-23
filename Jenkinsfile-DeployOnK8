@@ -17,9 +17,9 @@ pipeline {
         stage('creating tunnel to support load balancer') {
             steps {
                 script {
-                    sh '''
-                    #!/bin/bash
-                    source jenkins-flow-scripts/bash/kubernetes-utils.sh 
+                    sh '''#!/bin/bash
+                    chmod -R +x ./jenkins-flow-scripts/bash
+                    source jenkins-flow-scripts/bash/kubernetes-utils.sh
                     start_minikube_if_down
                     '''
                 }
