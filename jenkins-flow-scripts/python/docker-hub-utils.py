@@ -257,7 +257,7 @@ def push_docker_repo_to_hub(
         ):
             if delete_old_images(user, repo_name, control_obj, latest_fraze):
                 pushed_image = execute_subprocess_command(
-                    f"docker push {get_repo_name_latest_tag(user,repo_name)}"
+                    f"docker push {get_repo_name_latest_tag(user,repo_name,latest_fraze)}"
                 )
         else:
             raise Exception("falied to delete old images")
