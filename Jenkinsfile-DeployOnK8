@@ -56,11 +56,6 @@ pipeline {
                 }
             }
         }
-
-        
-
-
-
         stage('delete deployment') {
             steps {
                 script {
@@ -72,10 +67,9 @@ pipeline {
                      } else {
                         echo 'Skipping seleting pods due to parameter'
                      }
+                }
             }
+
         }
-
     }
-
-
 }
