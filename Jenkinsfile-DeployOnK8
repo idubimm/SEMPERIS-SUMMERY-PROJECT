@@ -1,30 +1,32 @@
 pipeline {
-  agent {
-    kubernetes
-     }
+  agent kubernetes
      stages{
-      stage{'deploy namespac '
+      stage('deploy namespace ') 
+      {
         staps{
           script{
               sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
           }
         }
       }
-      stage{'deploy postgres and its service '
+      stage('deploy postgres and its service ')
+      {
         staps{
           script{
               sh 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml'
           }
         }
       }
-      stage{'deploy flask app '
+      stage('deploy flask app ') 
+      {
         staps{
           script{
               sh 'kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml'
           }
         }
       }
-      stage{'deploy LB srvice '
+      stage('deploy LB srvice ') 
+      {
         staps{
           script{
               sh 'kubectl apply -f ./kubernetes/yaml-files/03-services.yaml'
