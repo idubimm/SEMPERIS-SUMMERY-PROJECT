@@ -14,15 +14,6 @@ properties([  parameters([ choice(defaultValue: '1', name: 'REPLICAS',
 pipeline {
     agent any // Or specify a particular agent configuration
     stages {
-        stage('creating tunnel to support load balancer') {
-            steps {
-                script {
-                    // Use a shell step to apply your Kubernetes YAML
-                    sh 'minikube tunnel'
-                }
-            }
-        }
-
         stage('deploy namespace') {
             steps {
                 script {
