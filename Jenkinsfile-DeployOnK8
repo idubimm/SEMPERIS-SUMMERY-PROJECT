@@ -30,5 +30,18 @@ pipeline {
                 }
             }
         }
+        stage('delete deployment') {
+            steps {
+                script {
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/03-services.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/02-flask.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+                }
+            }
+        }
+
     }
+
+
 }
