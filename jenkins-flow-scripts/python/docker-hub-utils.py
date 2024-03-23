@@ -17,8 +17,6 @@ DOCKER_RESPONSE = {"TOKEN": ""}
 # Buld format : VESION.RELEASE.BUILD
 BUILD_POSITION_4INCREMENTAL_TYPES = {"VERSION": 0, "RELEASE": 1, "BUILD": 2}
 
-LATEST_TAG_NAME = "lts"
-
 
 def get_docker_login_url():
     return DOCKER_ENDPOINTS["API_URL"] + DOCKER_ENDPOINTS["LOGIN"]
@@ -123,7 +121,7 @@ def get_repo_tags_json(repo_name, user):
         return {}
 
 
-def parse_json_to_tags_list(repo_json):
+def parse_json_to_tags_list(repo_json, latest_fraze):
     result_list = [
         {
             "id": item["id"],
@@ -132,7 +130,7 @@ def parse_json_to_tags_list(repo_json):
             "tag_name": item["name"],
         }
         for item in repo_json["results"]
-        if item["name"] != LATEST_TAG_NAME
+        if item["name"] != latest_fraze
     ]
     return result_list
 
@@ -173,8 +171,8 @@ def get_repo_name_with_tag(user, repo_name, tag):
     return f"{user}/{repo_name}:{tag}"
 
 
-def get_repo_name_latest_tag(user, repo_name):
-    return get_repo_name_with_tag(user, repo_name, LATEST_TAG_NAME)
+def get_repo_name_latest_tag(user, repo_name, latest_fraze):
+    return get_repo_name_with_tag(user, repo_name, latest_fraze)
 
 
 #  this command comes with no try exept since if fail - it will be in the responce status
@@ -184,10 +182,10 @@ def execute_subprocess_command(command):
     )
 
 
-def create_docker_image_tag_for_push(user, repo_name, tag):
+def create_docker_image_tag_for_push(user, repo_name, tag, latest_fraze):
     tag_name = get_repo_name_with_tag(user, repo_name, tag)
-    tag_name_lts = get_repo_name_latest_tag(user, repo_name)
-    local_image_tag_name = f"{user}/{repo_name}:{LATEST_TAG_NAME}"
+    tag_name_lts = get_repo_name_latest_tag(user, repo_name, latest_fraze)
+    local_image_tag_name = f"{user}/{repo_name}:{latest_fraze}"
     execute_subprocess_command(f"docker tag {local_image_tag_name} {tag_name} ")
     execute_subprocess_command(f"docker tag {local_image_tag_name} {tag_name_lts} ")
     pushed_image = execute_subprocess_command(f"docker push {tag_name}")
@@ -199,7 +197,7 @@ def create_docker_image_tag_for_push(user, repo_name, tag):
         raise Exception(pushed_image.stderr.decode())
 
 
-def delete_old_images(user, repo_name, control_obj):
+def delete_old_images(user, repo_name, control_obj, latest_fraze):
     tags_to_delete = control_obj["tags_to_delete"]
     token = DOCKER_RESPONSE["TOKEN"]
     failed_list = []
@@ -224,7 +222,7 @@ def delete_old_images(user, repo_name, control_obj):
     else:
         #  try to delete <latest(lts currently)> tag name id exist , if not do nothing
         try:
-            api_delete_tag_name(user, repo_name, token, LATEST_TAG_NAME)
+            api_delete_tag_name(user, repo_name, token, latest_fraze)
         except:
             pass
             # print("no latest tag name to delete")
@@ -234,7 +232,7 @@ def delete_old_images(user, repo_name, control_obj):
 #  if I use try catch then jenkins does not recognize failure , so I removed it
 # I tried with returning 1 or -1 but did not succeed
 def push_docker_repo_to_hub(
-    repo_name, user, password, build_incremental_type, number_builds_2keep
+    repo_name, user, password, build_incremental_type, number_builds_2keep, latest_fraze
 ):
     print(
         f""" push_docker_repo_to_hub \r 
@@ -242,21 +240,22 @@ def push_docker_repo_to_hub(
        - user : {user}\r  
        - password : {password} \r
        - build_incremental_type : {build_incremental_type} \r
-       - number_builds_2keep : {number_builds_2keep}  """
+       - number_builds_2keep : {number_builds_2keep}  
+       - latest_fraze : {latest_fraze}  """
     )
 
     if login_to_docker(user=user, password=password):
         repository_obj = get_repo_tags_json(repo_name, user)
         # if not repository_obj:
         #     return False
-        repository_tags_obj = parse_json_to_tags_list(repository_obj)
+        repository_tags_obj = parse_json_to_tags_list(repository_obj, latest_fraze)
         control_obj = get_next_tagname_and_tags_2delete(
             repository_tags_obj, build_incremental_type, int(number_builds_2keep)
         )
         if create_docker_image_tag_for_push(
-            user, repo_name, control_obj["next_tag_name"]
+            user, repo_name, control_obj["next_tag_name"], latest_fraze
         ):
-            if delete_old_images(user, repo_name, control_obj):
+            if delete_old_images(user, repo_name, control_obj, latest_fraze):
                 pushed_image = execute_subprocess_command(
                     f"docker push {get_repo_name_latest_tag(user,repo_name)}"
                 )
@@ -289,6 +288,7 @@ push_docker_repo_to_hub(
     repo_name=arg[3],
     build_incremental_type=arg[4],
     number_builds_2keep=arg[5],
+    latest_fraze=arg[6],
 )
 
 # push_docker_repo_to_hub(
