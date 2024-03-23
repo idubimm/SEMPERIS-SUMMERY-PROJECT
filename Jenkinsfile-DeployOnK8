@@ -1,10 +1,20 @@
 pipeline {
     agent any // Or specify a particular agent configuration
     stages {
+        stage('creating tunnel to support load balancer') {
+            steps {
+                script {
+                    // Use a shell step to apply your Kubernetes YAML
+                    sh 'minikube tunnel'
+                }
+            }
+        }
+
         stage('deploy namespace') {
             steps {
                 script {
                     // Use a shell step to apply your Kubernetes YAML
+                    minikube tunnel
                     sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
                 }
             }
@@ -30,16 +40,17 @@ pipeline {
                 }
             }
         }
-        stage('delete deployment') {
-            steps {
-                script {
-                    sh 'kubectl delete -f ./kubernetes/yaml-files/03-services.yaml'
-                    sh 'kubectl delete -f ./kubernetes/yaml-files/02-flask.yaml'
-                    sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
-                    sh 'kubectl delete -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
-                }
-            }
-        }
+
+        // stage('delete deployment') {
+        //     steps {
+        //         script {
+        //             sh 'kubectl delete -f ./kubernetes/yaml-files/03-services.yaml'
+        //             sh 'kubectl delete -f ./kubernetes/yaml-files/02-flask.yaml'
+        //             sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
+        //             sh 'kubectl delete -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+        //         }
+        //     }
+        // }
 
     }
 
