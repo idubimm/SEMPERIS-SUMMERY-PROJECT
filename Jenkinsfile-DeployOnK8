@@ -45,7 +45,7 @@ pipeline {
             steps {
                 script {
                     sh'''
-                    sh "sed -i 's/^REPLICAS^/${REPLICAS}/g' ./kubernetes/yaml-files/02-flask.yaml"
+                    sh "sed -i 's/#REPLICAS#/${REPLICAS}/g' ./kubernetes/yaml-files/02-flask.yaml"
                     kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml
                     '''
                 }
