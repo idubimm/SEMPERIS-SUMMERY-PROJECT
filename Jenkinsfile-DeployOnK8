@@ -47,7 +47,9 @@ pipeline {
                     sh'''
                     cp ./kubernetes/yaml-files/02-flask.yaml .
                     chmod 777 02-flask.yaml
-                    sh "sed -i 's/REPLICAS/${REPLICAS}/g' 02-flask.yaml"
+                    pwd
+                    ls -la  02-flask.yaml
+                    sh "sed -i s/REPLICAS/${REPLICAS}/g 02-flask.yaml"
                     kubectl apply -f ./kubernetes/yaml-files/02-flask.yaml
                     '''
                 }
