@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-db
+  namespace: semperis-ns
+spec:
+  serviceName: "postgres-db"
+  replicas: 1  # Single replica for the database
+  selector:
+    matchLabels:
+      app: postgres-db
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      containers:
+      - name: postgres-db
+        image: postgres
+        env:
+        - name: POSTGRES_USER
+          value: "idubi"
+        - name: POSTGRES_PASSWORD
+          value: "idubi"
+        - name: POSTGRES_DB
+          value: "idubi"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-db-storage
+          mountPath: /var/lib/postgresql/data        
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-db-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db
+  namespace: semperis-ns
+spec:
+  selector:
+    app: postgres-db
+  ports:
+    - protocol: TCP 
+      port: 5432
+      targetPort: 5432

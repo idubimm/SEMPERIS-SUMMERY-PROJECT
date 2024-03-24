@@ -1,108 +1,94 @@
-properties([  parameters([ string(defaultValue: 'idubi', description: 'domain name', name: 'DOMAIN', trim: true),
-                          string(defaultValue: 'flask-crud', description: 'repository name', name: 'REPONAME', trim: true)
+properties([  parameters([ choice(defaultValue: 1, name: 'REPLICAS',
+                                    choices: [1, 2, 3, 4, 5, 6,7,8],
+                                    description: 'Select a replica count from 1 to 8 for the web pod'
+                                ),
+                             booleanParam(
+                                    name: 'IS_SHUTDOWN',
+                                    defaultValue: false,
+                                    description: 'a checkbox to shut down app instead of starting it'
+                                )
+                        
                         ])
+
 ])
 pipeline {
-
-stage('deploy postgres on K8') {
-            agent {
-                label 'K8 agent'
-                kubernetes {
-yaml '''
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: flask-crud-ns                     
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres-db
-  namespace: flask-crud-ns
-spec:
-  selector: 
-    matchLabels:
-      app: postgres-db
-  replicas: 1  # Single replica for the database
-  template:
-    metadata:
-      labels:
-        app: postgres-db
-    spec:
-      containers:
-      - name: postgres-db
-        image: postgres
-        env:
-        - name: POSTGRES_USER
-          value: "idubi"
-        - name: POSTGRES_PASSWORD
-          value: "idubi"
-        - name: POSTGRES_DB
-          value: "idubi"
-        ports:
-        - containerPort: 5432
----        
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: web-app
-  namespace: flask-crud-ns
-spec:
-  selector:
-    matchLabels: 
-      app: web-app
-  replicas: 3  # Set to 3 for three replicas of the web application
-  template:
-    metadata:
-      labels:
-        app: web-app
-    spec:
-      containers:
-      - name: web-app
-        image: idubi/flask-crud:lts
-        env:
-        - name: DB_USER
-          value: "idubi"
-        - name: DB_PASSWORD
-          value: "idubi"
-        - name: DB_NAME
-          value: "idubi"
-        - name: DB_TYPE
-          value: "postgresql"
-        - name: DB_HOST
-          value: "postgres-db"
-        - name: DB_PORT
-          value: "5432"
-        ports:
-        - containerPort: 5000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-db
-  namespace: flask-crud-ns
-spec:
-  selector:
-    app: postgres-db
-  ports:
-    - protocol: TCP 
-      port: 5432
-      targetPort: 5432
----      
-apiVersion: v1
-kind: Service
-metadata:
-  name: web-app
-  namespace: flask-crud-ns
-spec:
-  selector:
-    app: web-app
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
-  type: LoadBalancer
-'''                }
+    agent any // Or specify a particular agent configuration
+    stages {
+        stage('creating tunnel to support load balancer') {
+            steps {
+                script {
+                    sh '''#!/bin/bash
+                    chmod -R +x ./jenkins-flow-scripts/bash
+                    source jenkins-flow-scripts/bash/kubernetes-utils.sh
+                    start_minikube_if_down
+                    '''
                 }
             }
+        }
+        stage('deploy namespace') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+                }
+            }
+        }
+        stage('deploy postgres and its service') {
+            steps {
+                script {
+                    echo 'STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
+                    sh 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml'
+                }
+            }
+        }
+        stage('deploy flask app with pre selected scale amount') {
+            steps {
+                script {
+                    sh'''
+                    cp ./kubernetes/yaml-files/02-flask.yaml .
+                    sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
+                    kubectl apply -f 02-flask.yaml
+                    '''
+                }
+            }
+        }
+        stage('deploy LB service') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ./kubernetes/yaml-files/03-services.yaml'
+                }
+            }
+        }
+
+        stage('test sanity for K8 execution') 
+        {
+            steps {
+                script {
+                        sh '''#!/bin/bash
+                            source jenkins-flow-scripts/bash/kubernetes-utils.sh
+                            endpoint=$(get_application_ip_and_port "web-app" "semperis-ns") 
+                            source jenkins-flow-scripts/bash/test-flask-app.sh
+                                                    [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
+                            validate_flask_in_loop     "$endpoint"              5               1             
+                        '''
+                }
+            }
+        }
+
+        stage('delete deployment') {
+            steps {
+                script {
+                     if (params.IS_SHUTDOWN) {
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/03-services.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/02-flask.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
+                    sh 'kubectl delete -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+                     } else {
+                        echo 'Skipping seleting pods due to parameter'
+                     }
+                }
+            }
+
+        }
+    }
 }
