@@ -65,11 +65,11 @@ pipeline {
             steps {
                 script {
                         sh '''#!/bin/bash
-                            source ./jenkins-flow-scripts/bash/test-flask-app.sh
+                            source jenkins-flow-scripts/bash/kubernetes-utils.sh
                             endpoint=$(get_application_ip_and_port "web-app" "semperis-ns") 
                             source jenkins-flow-scripts/bash/test-flask-app.sh
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
-                            validate_flask_in_loop         "$endpoint"              5               1             
+                            validate_flask_in_loop     "$endpoint"              5               1             
                         '''
                 }
             }
