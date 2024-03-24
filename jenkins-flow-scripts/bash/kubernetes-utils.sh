@@ -23,8 +23,16 @@ start_minikube_tunel_if_stopped() {
     fi
 } 
 
-# get_ip_and_port_forTunneling(){
-
-# }
+get_application_ip_and_port(){
+    serviceName=$1
+    namespace=$2
+    # echo $namespace
+    # echo $serviceName
+    minikubeip=$(minikube ip)
+    # echo "minikubeip  -->  $minikubeip"
+    port=$(kubectl get svc --namespace=$namespace | awk '//{split($5,a,":|/"); print a[2]}' |grep -Eo '[0-9]+')
+    # echo "port  -->  $port"
+    echo "$minikubeip:$port"
+}
 
 
