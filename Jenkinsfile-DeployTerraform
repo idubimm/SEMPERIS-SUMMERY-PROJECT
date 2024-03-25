@@ -72,12 +72,14 @@ pipeline {
             steps {
                 script {
                      if (params.IS_DESTROY) {
-                        sh 'echo destroying AWS environment'
-                        sh 'cd ./jenkins-flow-scripts/terraform/'
-                        sh 'terraform destroy -auto-approve'
+                        sh'''#!/bin/bash
+                        echo destroying AWS environment
+                        cd ./jenkins-flow-scripts/terraform/
+                        terraform destroy -auto-approve
+                        '''
                      } else {
                          sh '''#!/bin/bash
-                        echo "Skipping env destruction"
+                         echo "Skipping env destruction"
                         '''
                      }
                 }
