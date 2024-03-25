@@ -73,6 +73,7 @@ pipeline {
                 script {
                      if (params.IS_DESTROY) {
                         sh 'echo destroying AWS environment'
+                        sh 'terraform destroy -auto-approve'
                      } else {
                          sh '''#!/bin/bash
                         echo "Skipping env destruction"
