@@ -57,8 +57,7 @@ pipeline {
                             sh'''
                             chmod -R +x ../bash
                             source ../bash/bash/terraform_utils.sh
-                            lb_ip=$(terraform output |grep -oP 'lb_dns_name = "''\K[^"]+')
-                            
+                            lb_ip=$(get_load_balance_ip)
                             source ../bash/test-flask-app.sh
                             #                    [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
                             validate_flask_in_loop            $lb_ip         5               1  
