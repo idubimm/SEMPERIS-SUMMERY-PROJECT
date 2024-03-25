@@ -55,7 +55,7 @@ pipeline {
                     if (params.IS_DESTROY) {
                       echo ' this job selected to destroy AWS env , smoke tests are ignored'
                     } else {
-                            sh'''
+                            sh'''#!/bin/bash
                             cd ./jenkins-flow-scripts/terraform/
                             chmod -R +x ../bash
                             source ../bash/terraform_utils.sh
