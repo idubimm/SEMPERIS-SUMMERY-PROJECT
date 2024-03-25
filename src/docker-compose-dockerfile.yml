@@ -1,12 +1,12 @@
-version: '3'
+version: "3"
 
 services:
   web-app:
     build:
       context: ./src
-      dockerfile: Dockerfile  
+      dockerfile: Dockerfile
       args:
-        CACHEBUST: $RANDOM 
+        CACHEBUST: $RANDOM
     ports:
       - "5000:5000"
     environment:
@@ -26,22 +26,3 @@ services:
       POSTGRES_DB: idubi
     ports:
       - "5432:5432"
-   
-
-
-
-
-
-# healthcheck:
-#       test: ["CMD-SHELL", "PGPASSWORD=idubi psql -U idubi -d idubi -c 'SELECT 1 FROM user LIMIT 1;' > /dev/null || exit 1"]
-#       interval: 30s
-#       timeout: 15s
-#       retries: 5
-
-# networks:
-#   - app-network
-# networks:
-#   app-network:
-
-    # networks:
-    #   - app-network
