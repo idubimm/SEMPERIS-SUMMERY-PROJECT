@@ -1,15 +1,13 @@
-version: '3'
+version: "3"
 
 services:
   web-app:
     container_name: "${COMPOSE_NAME}-web-app"
     image: "$FLASK_BUILD_NAME"
     deploy:
-        restart_policy:
-            condition: on-failure
-            max_attempts: 3
-            # delay: 5s  - only work with orchestrators not compose
-            # window: 120s - only work with orchestrators not compose    
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
     ports:
       - "5000:5000"
     environment:
@@ -34,24 +32,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - flask-ntwrk   
+      - flask-ntwrk
 networks:
   flask-ntwrk:
     driver: bridge
-
-
-
-
-# healthcheck:
-#       test: ["CMD-SHELL", "PGPASSWORD=idubi psql -U idubi -d idubi -c 'SELECT 1 FROM user LIMIT 1;' > /dev/null || exit 1"]
-#       interval: 30s
-#       timeout: 15s
-#       retries: 5
-
-# networks:
-#   - app-network
-# networks:
-#   app-network:
-
-    # networks:
-    #   - app-network
