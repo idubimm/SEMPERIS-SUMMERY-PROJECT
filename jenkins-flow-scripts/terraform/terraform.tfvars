@@ -13,3 +13,6 @@ image_ids_free_tier = {
 sg_ingress_ports = [80, 22, 5000, 6443]
 
 custom_key_pair = "semperis-exercise-kp"
+
+subnets_availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e", "us-east-1f"]
+

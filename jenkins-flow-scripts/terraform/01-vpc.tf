@@ -23,8 +23,10 @@
 # a communication means 
 
 resource "aws_vpc" "custom_vpc" {
-  cidr_block       = "10.0.0.0/16" # available ip range
-  instance_tenancy = "default"
+  cidr_block           = "10.0.0.0/16" # available ip range
+  instance_tenancy     = "default"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
   tags = {
     "Name" = "custom_vpc"

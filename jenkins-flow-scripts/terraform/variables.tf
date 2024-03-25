@@ -15,3 +15,8 @@ variable "custom_key_pair" {
   description = "key pair pre created for this excersize to be used by jenkins to connect ssh to all my ec2 instances"
   type        = string
 }
+
+variable "subnets_availability_zones" {
+  description = "available availability zone for subnets creation"
+  type        = list(string)
+}
