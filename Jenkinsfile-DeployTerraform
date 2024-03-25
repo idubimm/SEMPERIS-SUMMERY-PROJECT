@@ -9,6 +9,12 @@ properties([  parameters([ booleanParam(
 pipeline {
     agent any 
     stages {
+        stage('Checkout Code') {
+            steps {
+                // Checkout code from Git
+                checkout scm
+            }
+        }
         stage('init terraform build') {
             steps {
                 script {
