@@ -42,6 +42,7 @@ pipeline {
                       echo ' this job selected to destroy AWS env , terraform changes are ignored'
                     } else {
                             sh'''
+                                cd ./jenkins-flow-scripts/terraform/
                                 terraform apply -auto-approve
                             '''
                     }
@@ -56,6 +57,7 @@ pipeline {
                     } else {
                             sh'''
                             chmod -R +x ../bash
+                            cd ./jenkins-flow-scripts/terraform/
                             source ../bash/bash/terraform_utils.sh
                             lb_ip=$(get_load_balance_ip)
                             source ../bash/test-flask-app.sh
@@ -66,40 +68,6 @@ pipeline {
                 }
             }
         }
-        stage('deploy flask app with pre selected scale amount') {
-            steps {
-                script {
-                    sh'''
-                    cp ./kubernetes/yaml-files/02-flask.yaml .
-                    sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
-                    kubectl apply -f 02-flask.yaml
-                    '''
-                }
-            }
-        }
-        stage('deploy LB service') {
-            steps {
-                script {
-                    sh 'kubectl apply -f ./kubernetes/yaml-files/03-services.yaml'
-                }
-            }
-        }
-
-        stage('test sanity for K8 execution') 
-        {
-            steps {
-                script {
-                        sh '''#!/bin/bash
-                            source jenkins-flow-scripts/bash/kubernetes-utils.sh
-                            endpoint=$(get_application_ip_and_port "web-app" "semperis-ns") 
-                            source jenkins-flow-scripts/bash/test-flask-app.sh
-                                                    [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
-                            validate_flask_in_loop     "$endpoint"              5               1             
-                        '''
-                }
-            }
-        }
-
         stage('destroy AWS enviroment') {
             steps {
                 script {
