@@ -1,7 +1,7 @@
 properties([  parameters([ booleanParam(
                                     name: 'IS_DESTROY',
                                     defaultValue: false,
-                                    description: 'sselect if we want to destroy the env instead of building it'
+                                    description: 'select if we want to destroy the env instead of building it'
                                 )                       
                         ])
 
