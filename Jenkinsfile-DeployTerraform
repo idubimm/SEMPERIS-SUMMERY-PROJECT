@@ -7,7 +7,7 @@ properties([  parameters([ booleanParam(
 
 ])
 pipeline {
-    agent any // Or specify a particular agent configuration
+    agent any 
     stages {
         stage('init terraform build') {
             steps {
