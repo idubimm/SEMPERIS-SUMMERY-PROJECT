@@ -3,7 +3,7 @@ resource "aws_lb" "custom_lb" {
   name               = "custom-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.sg_custom.id]
+  security_groups    = [aws_security_group.sg_custom_public.id]
   subnets            = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_e.id]
 
 
@@ -35,17 +35,20 @@ resource "aws_lb_listener" "custom_lb_listener" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "forward"
     target_group_arn = aws_lb_target_group.custom_lb_target_group.arn
+    type             = "forward"
   }
 }
 
-resource "aws_lb_target_group_attachment" "custom-lb-target-group-attachement" {
-  for_each = { for idx, inst in aws_instance.ec2-custom-public-compute : tostring(idx) => inst.id }
-
+resource "aws_lb_target_group_attachment" "custom_lb_target_group_attachement_a" {
   target_group_arn = aws_lb_target_group.custom_lb_target_group.arn
-  target_id        = each.value
-  port             = 80
+  target_id        = aws_instance.ec2_custom_public_compute_a.id
+  port             = 5000
 }
 
+resource "aws_lb_target_group_attachment" "custom_lb_target_group_attachement_e" {
+  target_group_arn = aws_lb_target_group.custom_lb_target_group.arn
+  target_id        = aws_instance.ec2_custom_public_compute_e.id
+  port             = 5000
+}
 
