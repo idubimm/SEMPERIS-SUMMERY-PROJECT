@@ -9,12 +9,12 @@ properties([  parameters([ booleanParam(
 pipeline {
     agent any 
     stages {
-        stage('clean code from Workspace ') {
-            steps {
-                // cleanup plugin
-                cleanWs()
-            }     
-        }
+        // stage('clean code from Workspace ') {
+        //     steps {
+        //         // cleanup plugin
+        //         cleanWs()
+        //     }     
+        // }
         stage('Checkout Code') {
             steps {
                 // Checkout code from Git
