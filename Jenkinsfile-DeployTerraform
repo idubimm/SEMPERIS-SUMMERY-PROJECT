@@ -16,7 +16,7 @@ pipeline {
                             sh'''
                             #!/bin/bash
                             cd ./jenkins-flow-scripts/terraform/
-                            sh 'echo "this job selected to destroy AWS env "'
+                            echo "this job selected to destroy AWS env "
                             terraform init
                             terraform destroy
                              '''
