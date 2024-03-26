@@ -1,0 +1,55 @@
+properties([  parameters([ booleanParam(
+                                    name: 'IS_DESTROY',
+                                    defaultValue: false,
+                                    description: 'select if we want to destroy the env instead of building it'
+                                )                       
+                        ])
+
+])
+pipeline {
+    agent any 
+    stages {
+        stage('execute terraform') {
+            steps {
+                script {
+                    if (params.IS_DESTROY) {
+                            sh'''
+                            #!/bin/bash
+                            cd ./jenkins-flow-scripts/terraform/
+                            echo "this job selected to destroy AWS env "
+                            terraform init
+                            terraform destroy
+                             '''
+                    } else {
+                            sh'''
+                                #!/bin/bash
+                                cd ./jenkins-flow-scripts/terraform/
+                                terraform init
+                                terraform plan
+                                terraform apply -auto-approve
+                            '''
+                     }
+                }
+            }
+        }
+        stage('smoke test that application is running in the load balancer') {
+            steps {
+                script {
+                    if (params.IS_DESTROY) {
+                      echo ' this job selected to destroy AWS env , smoke tests are ignored'
+                    } else {
+                            sh'''#!/bin/bash
+                            cd ./jenkins-flow-scripts/terraform/
+                            chmod -R +x ../bash
+                            source ../bash/terraform_utils.sh
+                            lb_ip=$(get_load_balance_ip)
+                            source ../bash/test-flask-app.sh
+                            #                    [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
+                            validate_flask_in_loop            $lb_ip         5               1  
+                            '''
+                    }
+                }
+            }
+        }
+    }
+}
