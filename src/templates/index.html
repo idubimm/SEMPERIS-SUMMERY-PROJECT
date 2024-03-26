@@ -15,7 +15,14 @@
         <input type="submit" value="Submit">
     </form>
     <h2>Registered Users</h2>
+
+        {% for user in registered_users %}
+        <p>Name: {{ user.name }}, Email: {{ user.email }}</p>
+        {% endfor %}
+
     <!-- <ul>
+
+
         {% for user in registered_users %}
             <li>{{ user['name'] }} - {{ user['email'] }}</li>
         {% endfor %}
