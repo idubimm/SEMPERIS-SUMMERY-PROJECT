@@ -43,6 +43,9 @@ terraform/.terraform/
 *.env
 .terraform
 .terraform/
+*.hcl
+*.backup
+
 
 #bash
 nohup
