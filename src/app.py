@@ -60,6 +60,13 @@ def index():
 #     return render_template_string(HTML_TEMPLATE, registered_users=registered_users)
 
 
+@app.route("/ALL/")
+def all_users():
+    registered_users = User.query.all()
+    # Pass `registered_users` to your template
+    return render_template("index.html", registered_users=registered_users)
+
+
 @app.route("/save", methods=["POST"])
 def save_user():
     """save a user in db using sql alchemy"""
@@ -68,7 +75,7 @@ def save_user():
     new_user = User(name=name, email=email)
     db.session.add(new_user)
     db.session.commit()
-    return redirect(url_for("index"))
+    return redirect(url_for("all_users"))
 
 
 @app.route("/hello/<name>")
