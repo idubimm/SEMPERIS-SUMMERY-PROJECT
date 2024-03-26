@@ -9,37 +9,26 @@ properties([  parameters([ booleanParam(
 pipeline {
     agent any 
     stages {
-        stage('init terraform build') {
+        stage('execute terraform') {
             steps {
                 script {
                     if (params.IS_DESTROY) {
                             sh'''
-                                #!/bin/bash
-                                echo ' this job selected to destroy AWS env , init is ignored'
-                                cd ./jenkins-flow-scripts/terraform/
-                            '''
-
+                            #!/bin/bash
+                            cd ./jenkins-flow-scripts/terraform/
+                            sh 'echo "this job selected to destroy AWS env "'
+                            terraform init
+                            terraform destroy
+                             '''
                     } else {
                             sh'''
                                 #!/bin/bash
                                 cd ./jenkins-flow-scripts/terraform/
                                 terraform init
-                            '''
-                     }
-                }
-            }
-        }
-        stage('apply terraform changes') {
-            steps {
-                script {
-                    if (params.IS_DESTROY) {
-                      echo ' this job selected to destroy AWS env , terraform changes are ignored'
-                    } else {
-                            sh'''
-                                cd ./jenkins-flow-scripts/terraform/
+                                terraform plan
                                 terraform apply -auto-approve
                             '''
-                    }
+                     }
                 }
             }
         }
@@ -61,24 +50,6 @@ pipeline {
                     }
                 }
             }
-        }
-        stage('destroy AWS enviroment') {
-            steps {
-                script {
-                     if (params.IS_DESTROY) {
-                        sh'''#!/bin/bash
-                        echo destroying AWS environment
-                        cd ./jenkins-flow-scripts/terraform/
-                        terraform destroy -auto-approve
-                        '''
-                     } else {
-                         sh '''#!/bin/bash
-                         echo "Skipping env destruction"
-                        '''
-                     }
-                }
-            }
-
         }
     }
 }
