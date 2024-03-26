@@ -53,11 +53,11 @@ def index():
     return render_template("index.html")
 
 
-# @app.route('/ALL/')
-# def all_users():
-#     registered_users = User.query.all()
-#     # Pass `registered_users` to your template
-#     return render_template_string(HTML_TEMPLATE, registered_users=registered_users)
+@app.route("/ALL/")
+def all_users():
+    registered_users = User.query.all()
+    # Pass `registered_users` to your template
+    return render_template("index.html", registered_users=registered_users)
 
 
 @app.route("/save", methods=["POST"])
