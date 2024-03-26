@@ -49,8 +49,8 @@ def create_user(name, email):
 
 @app.route("/")
 def index():
-    """index default for site access url"""
-    return render_template("index.html")
+    """Redirect to the all_users page"""
+    return redirect(url_for("all_users"))
 
 
 @app.route("/ALL/")
@@ -68,13 +68,24 @@ def save_user():
     new_user = User(name=name, email=email)
     db.session.add(new_user)
     db.session.commit()
-    return redirect(url_for("index"))
+    return redirect(url_for("all_users"))
 
 
 @app.route("/hello/<name>")
 def hello(name):
     """hello world function"""
     return f"Hello, {name}!"
+
+
+@app.route("/delete", methods=["POST"])
+def delete_users():
+    """delete selected users from db using sql alchemy"""
+    for key in request.form:
+        if key.startswith("user"):
+            user_id = int(key[4:])
+            User.query.filter_by(id=user_id).delete()
+    db.session.commit()
+    return redirect(url_for("all_users"))
 
 
 @app.route("/ping", methods=["POST"])
