@@ -60,13 +60,6 @@ def all_users():
     return render_template("index.html", registered_users=registered_users)
 
 
-@app.route("/ALL/")
-def all_users():
-    registered_users = User.query.all()
-    # Pass `registered_users` to your template
-    return render_template("index.html", registered_users=registered_users)
-
-
 @app.route("/save", methods=["POST"])
 def save_user():
     """save a user in db using sql alchemy"""
