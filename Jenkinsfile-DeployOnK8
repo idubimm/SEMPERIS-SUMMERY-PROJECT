@@ -41,10 +41,10 @@ pipeline {
             script {
                     sh'''#!/bin/bash
                     source jenkins-flow-scripts/bash/kubernetes-utils.sh
+                    kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
                     echo "STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply"
                                             #ELEMENTTYPE  #ELEMENT NAME   # NAMESPACE         #FILE FOR DELETE POD
                     delete_active_element 'pods'         'postgres'        'semperis-ns'  './kubernetes/yaml-files/01-postgres.yaml' 
-                    kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
                     '''
 
                 }
