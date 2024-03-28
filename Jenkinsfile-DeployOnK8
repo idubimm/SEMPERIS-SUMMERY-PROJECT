@@ -14,7 +14,7 @@ properties([  parameters([ choice(defaultValue: 1, name: 'REPLICAS',
 pipeline {
     agent any // Or specify a particular agent configuration
     stages {
-        stage('loading minikube if not woriking') {
+        stage('loading minikube if not working') {
             when {expression { !params.IS_SHUTDOWN }}
             steps {
                 script {
