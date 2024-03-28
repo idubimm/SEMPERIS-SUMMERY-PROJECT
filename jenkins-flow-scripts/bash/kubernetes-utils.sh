@@ -43,9 +43,7 @@ delete_active_element(){
       #'pods' 'postgres' 'semperis-ns'  './kubernetes/yaml-files/01-postgres.yaml' 
       echo 'inside delete active elements'
       active_elements=$(kubectl get $ELEMENTTYPE --namespace=$NAMESPACE | grep $ELEMENTNAME |wc -l)
-      echo "active elements found : active_elements  --> $active_elements"  
       if [ "$active_elements" -gt 0 ]; then
-           echo "active elements found : active_elements  --> $active_elements"  
            kubectl delete -f $FILE
       fi
 }		
