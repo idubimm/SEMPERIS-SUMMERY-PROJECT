@@ -57,10 +57,16 @@ clear_pod_cache() {
     podname=$(kubectl get pods --namespace=$namespace | grep $appname | awk '{print $1}')
     echo "clear_pod_cache  ==> podname=$podname"
     # if podname has value
-    if [ -n "$podname" ]; then   
-        echo "clear_pod_cache  ==> podname=$podname   ==> inside if"
-        kubectl delete pods -l app=$appname
-        minikube cache delete $podname
+    if [ -n "$podname" ]; then  
+        currentpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
+        echo `current pod is ${currentpod}` 
+        echo "deleting pod ..."
+        echo `kubectl delete pods -l app=web-app --namespace=$namespace `
+        minikube cache delete 
         minikube cache reload
+        newpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
+        echo `replaced ${currentpod} with ${currentpod}` 
+        echo `kubectl get pod ${newpod} --namespace=semperis-ns  -o yaml`
     fi
 } 
+web-app-6c6ff589c8-ls4hv
