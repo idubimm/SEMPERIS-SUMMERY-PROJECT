@@ -16,6 +16,7 @@ spec:
       containers:
       - name: web-app
         image: idubi/flask-crud:lts
+        imagePullPolicy: Always
         env:
         - name: DB_USER
           value: "idubi"
