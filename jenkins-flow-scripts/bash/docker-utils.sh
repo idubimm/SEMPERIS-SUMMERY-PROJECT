@@ -125,6 +125,7 @@ build_docker_image() {
     DOMAIN=$3
     REPONAME=$4
     PATHTODOCKERFILE=$5
+    TAGVERSION=$6
     
     echo "USER             ---> $USER"
     echo "PASSWORD         ---> $PASSWORD"
@@ -133,12 +134,12 @@ build_docker_image() {
     echo "PATHTODOCKERFILE ---> $PATHTODOCKERFILE"
 
 
-    echo "DOMAIN/REPONAME:lts  --> $DOMAIN/$REPONAME:lts"
+    echo "DOMAIN/REPONAME:TAG  --> $DOMAIN/$REPONAME:$TAGVERSION"
     
     verify_docker_login  $USER $PASSWORD
     cleanup_old_local_repo $DOMAIN $REPONAME
     
-    docker build --no-cache --build-arg CACHEBUST=$(date +%s) -t "$REPONAME":lts "$PATHTODOCKERFILE"
+    docker build --no-cache --build-arg CACHEBUST=$(date +%s) -t "$REPONAME":"$TAGVERSION" "$PATHTODOCKERFILE"
 } 
 
 build_docker_compose() {

@@ -75,8 +75,8 @@ pipeline {
                         # echo " domain ---> $DOMAIN"
                         # echo " DOCKER_USERNAME ---> $DOCKER_USERNAME"
 
-                        #                   [1. domain]   [2. app name]     [3.dockerfile path]
-                        build_docker_image  $DOCKER_USERNAME $DOCKER_PASSWORD  $DOMAIN   $REPONAME  './src/'
+                        #    [1. domain]   [2. app name]     [3.dockerfile path]  'TAG VERSION' --> 0.0.0 from build , later on version will be handles
+                        build_docker_image  $DOCKER_USERNAME $DOCKER_PASSWORD  $DOMAIN   $REPONAME  './src/' '0.0.0'
                         
                     '''
                     }
@@ -92,7 +92,7 @@ pipeline {
                         sh '''#!/bin/bash
                             source jenkins-flow-scripts/bash/docker-utils.sh 
                             #                        [1. compose file path]         [2. docker build name]  [3. compose image prefix]
-                            build_docker_compose  'src/docker-compose-image.yml'  $DOMAIN/$REPONAME:lts    "$REPONAME-compose"
+                            build_docker_compose  'src/docker-compose-image.yml'  "$DOMAIN/$REPONAME:0.0.0"    "$REPONAME-compose"
                         '''
                 }
             }
@@ -106,7 +106,7 @@ pipeline {
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
                             validate_flask_in_loop "http://127.0.0.1:5000"     5               1  
                             source jenkins-flow-scripts/bash/docker-utils.sh
-                            stop_docker_compose 'src/docker-compose-image.yml' "$DOMAIN/$REPONAME:lts"    'flask-compose'
+                            stop_docker_compose 'src/docker-compose-image.yml' "$DOMAIN/$REPONAME:0.0.0"  'flask-compose'
                         '''                        
                 }
             }

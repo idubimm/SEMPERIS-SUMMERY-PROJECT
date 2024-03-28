@@ -285,14 +285,14 @@ def push_docker_repo_to_hub(
 arg = sys.argv
 
 # this file is executed with this parameters from jenklins , also a debug file exist with execution params
-push_docker_repo_to_hub(
-    user=arg[1],
-    password=arg[2],
-    repo_name=arg[3],
-    build_incremental_type=arg[4],
-    number_builds_2keep=arg[5],
-    latest_fraze=arg[6],
-)
+# push_docker_repo_to_hub(
+#     user=arg[1],
+#     password=arg[2],
+#     repo_name=arg[3],
+#     build_incremental_type=arg[4],
+#     number_builds_2keep=arg[5],
+#     latest_fraze=arg[6],
+# )
 
 # push_docker_repo_to_hub(
 #     user="idubi",
@@ -309,3 +309,4 @@ push_docker_repo_to_hub(
 #     build_incremental_type="BUILD",
 #     number_builds_2keep="4",
 # )
+create_docker_image_tag_for_push("idubi", "flask-crud", "0.0.1", "lts")
