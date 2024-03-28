@@ -110,27 +110,30 @@
 </head>
 
 <body>
-    <h1>User Form</h1>
-    <form action="/save" method="post">
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required><br>
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-        <input type="submit" value="Submit">
-    </form>
-    <h2>Registered Users</h2>
-
-        {% for user in registered_users %}
-        <p>Name: {{ user.name }}, Email: {{ user.email }}</p>
-        {% endfor %}
-
-    <!-- <ul>
 
 
-        {% for user in registered_users %}
-            <li>{{ user['name'] }} - {{ user['email'] }}</li>
-        {% endfor %}
-    </ul> -->
+    <div class="container">
+        <h1>User Form</h1>
+        <form action="/save" method="post">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+            <input type="submit" value="Submit">
+        </form>
+        <h2>Registered Users</h2>
+        <form action="/delete" method="post">
+            {% for user in registered_users %}
+            <p>
+                <input type="checkbox" id="user{{ user.id }}" name="user{{ user.id }}">
+                <label for="user{{ user.id }}">Name: {{ user.name }}, Email: {{ user.email }}</label>
+            </p>
+            {% endfor %}
+            <input type="submit" value="Delete Selected Users">
+        </form>
+    </div>
+
+
 </body>
 
 </html>

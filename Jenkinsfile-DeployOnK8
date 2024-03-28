@@ -46,6 +46,7 @@ pipeline {
                     delete_active_element 'pods'         'postgres'        'semperis-ns'  './kubernetes/yaml-files/01-postgres.yaml' 
                     kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
                     '''
+
                 }
             }
         }
