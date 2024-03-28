@@ -15,6 +15,7 @@ pipeline {
     agent any // Or specify a particular agent configuration
     stages {
         stage('loading minikube if not woriking') {
+            when {expression { !params.IS_SHUTDOWN }}
             steps {
                 script {
                     sh '''#!/bin/bash
@@ -26,6 +27,7 @@ pipeline {
             }
         }
         stage('deploy namespace') {
+            when {expression { !params.IS_SHUTDOWN }}
             steps {
                 script {
                     sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
@@ -34,6 +36,7 @@ pipeline {
         }
   
     stage('deploy postgres and its service') {
+        when {expression { !params.IS_SHUTDOWN }}
         steps {
             script {
                     sh'''#!/bin/bash
@@ -47,6 +50,7 @@ pipeline {
             }
         }
     stage('deploy flask app with pre selected scale amount') {
+        when {expression { !params.IS_SHUTDOWN }}
         steps {
             script {
                     sh'''
