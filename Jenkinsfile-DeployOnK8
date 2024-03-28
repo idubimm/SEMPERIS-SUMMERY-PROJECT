@@ -29,6 +29,7 @@ pipeline {
         steps {
             script {
                 if (!params.IS_SHUTDOWN ) {
+                    sh 'echo "is shutdown   .....  <---"'
                     sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
                 }
                 else {
@@ -46,7 +47,7 @@ pipeline {
                     source jenkins-flow-scripts/bash/kubernetes-utils.sh
                     echo 'STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply'
                                             #ELEMENTTYPE  #ELEMENT NAME   # NAMESPACE         #FILE FOR DELETE POD
-                    delete_active_element 'pods'         'postgres'        'semperis-ns'  './kubernetes/yaml-files/01-postgres.yaml' 
+                    delete_active_element pods         postgres        semperis-ns  './kubernetes/yaml-files/01-postgres.yaml' 
                     kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
                     '''
                 }
