@@ -28,15 +28,21 @@ pipeline {
         stage('deploy namespace') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+                    if (!params.IS_SHUTDOWN ) {
+                        sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
+                    else {
+                            echo 'Skipping Namespace DEPLOYMENT due to deletion of k8 Namespace'
+                        }
+                    }
                 }
             }
         }
   
     stage('deploy postgres and its service') {
         steps {
-            if (!params.IS_SHUTDOWN ) {
             script {
+                if (!params.IS_SHUTDOWN ) {
+            
                     '''#!/bin/bash
                     source jenkins-flow-scripts/bash/kubernetes-utils.sh
                     echo 'STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply'
@@ -45,27 +51,28 @@ pipeline {
                     kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
                     '''
                 }
-            } else {
+                 else {
                         echo 'Skipping POSTGRES DEPLOYMENT due to deletion of k8 Namespace'
+                    }
             }
         }
     }
     stage('deploy flask app with pre selected scale amount') {
-        steps {
-            if (!params.IS_SHUTDOWN ) {
+            steps {
                     script {
-                            sh'''
-                            cp ./kubernetes/yaml-files/02-flask.yaml .
-                            sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
-                            kubectl apply -f 02-flask.yaml
-                            '''
-                        } else {
-                                echo 'Skipping flask app DEPLOYMENT due to deletion of k8 Namespace'
+                        if (!params.IS_SHUTDOWN ) {
+                                sh'''
+                                cp ./kubernetes/yaml-files/02-flask.yaml .
+                                sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
+                                kubectl apply -f 02-flask.yaml
+                                '''
+                        }  else {
+                                    echo 'Skipping flask app DEPLOYMENT due to deletion of k8 Namespace'
                         }
                 }
             }
         }
-        stage('deploy LB service') {
+    stage('deploy LB service') {
             steps {
                 script {
                     if (!params.IS_SHUTDOWN ) 
