@@ -54,7 +54,7 @@ clear_pod_cache() {
     namespace=$2
 
     #web-app semperis-ns
-    podname=get pods --namespace=$namespace | grep $appname | awk '{print $1}'
+    podname=$(kubectl get pods --namespace=$namespace | grep $appname | awk '{print $1}')
     echo "clear_pod_cache  ==> podname=$podname"
     # if podname has value
     if [ -n "$podname" ]; then   
