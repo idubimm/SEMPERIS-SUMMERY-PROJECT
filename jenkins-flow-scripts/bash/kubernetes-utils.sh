@@ -34,7 +34,7 @@ get_application_ip_and_port(){
     # echo "port  -->  $port"
     echo "$minikubeip:$port"
 }
-
+ 
 delete_active_element(){
       ELEMENTTYPE=$1
       ELEMENTNAME=$2 
