@@ -4,6 +4,7 @@ start_minikube_if_down() {
     minikubeStatus=$(minikube status)
     running_count=$(echo "$minikubeStatus" | grep -o "Running" | wc -l)
     configured_count=$(echo "$minikubeStatus" | grep -o "Configured" | wc -l)
+    echo "configured_count ==> $configured_count"
     if [[ $running_count -eq 3 && $configured_count -eq 1 ]]; then
             echo "Status check for minikube passed --> continue with kubernetes work"
             return 0
@@ -59,7 +60,7 @@ clear_pod_cache() {
     # if podname has value
     if [ -n "$podname" ]; then  
         currentpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
-        echo `current pod is ${currentpod}` 
+        echo `current pod is $currentpod` 
         echo "deleting pod ..."
         echo `kubectl delete pods -l app=web-app --namespace=$namespace `
         minikube cache delete 
@@ -69,4 +70,3 @@ clear_pod_cache() {
         echo `kubectl get pod ${newpod} --namespace=semperis-ns  -o yaml`
     fi
 } 
-web-app-6c6ff589c8-ls4hv
