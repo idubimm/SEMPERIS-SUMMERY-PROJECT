@@ -77,7 +77,6 @@ pipeline {
         {
 
             when {expression { !params.IS_SHUTDOWN }}
-
             steps {
                 script {
                         sh '''#!/bin/bash
