@@ -67,6 +67,9 @@ pipeline {
 
         stage('test sanity for K8 execution') 
         {
+
+            when {expression { !params.IS_SHUTDOWN }}
+
             steps {
                 script {
                         sh '''#!/bin/bash
