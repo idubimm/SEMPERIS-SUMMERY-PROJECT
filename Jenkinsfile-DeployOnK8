@@ -32,17 +32,23 @@ pipeline {
                 }
             }
         }
-        stage('deploy postgres and its service') {
-            steps {
-                script {
+  
+    stage('deploy postgres and its service') {
+        steps {
+            script {
+                    '''#!/bin/bash
+                    source jenkins-flow-scripts/bash/kubernetes-utils.sh
                     echo 'STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply'
-                    sh 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml'
+                                            #ELEMENTTYPE  #ELEMENT NAME   # NAMESPACE         #FILE FOR DELETE POD
+                    delete_active_element 'pods'         'postgres'        'semperis-ns'  './kubernetes/yaml-files/01-postgres.yaml' 
+                    kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
+                    '''
                 }
             }
         }
-        stage('deploy flask app with pre selected scale amount') {
-            steps {
-                script {
+    stage('deploy flask app with pre selected scale amount') {
+        steps {
+            script {
                     sh'''
                     cp ./kubernetes/yaml-files/02-flask.yaml .
                     sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
