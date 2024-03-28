@@ -34,5 +34,19 @@ get_application_ip_and_port(){
     # echo "port  -->  $port"
     echo "$minikubeip:$port"
 }
-
+ 
+delete_active_element(){
+      ELEMENTTYPE=$1
+      ELEMENTNAME=$2 
+      NAMESPACE=$3
+      FILE=$4
+      #'pods' 'postgres' 'semperis-ns'  './kubernetes/yaml-files/01-postgres.yaml' 
+      echo 'inside delete active elements'
+      active_elements=$(kubectl get $ELEMENTTYPE --namespace=$NAMESPACE | grep $ELEMENTNAME |wc -l)
+      echo "active elements found : active_elements  --> $active_elements"  
+      if [ "$active_elements" -gt 0 ]; then
+           echo "active elements found : active_elements  --> $active_elements"  
+           kubectl delete -f $FILE
+      fi
+}		
 

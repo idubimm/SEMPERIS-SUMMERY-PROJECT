@@ -14,7 +14,8 @@ properties([  parameters([ choice(defaultValue: 1, name: 'REPLICAS',
 pipeline {
     agent any // Or specify a particular agent configuration
     stages {
-        stage('creating tunnel to support load balancer') {
+        stage('loading minikube if not woriking') {
+            when {expression { !params.IS_SHUTDOWN }}
             steps {
                 script {
                     sh '''#!/bin/bash
@@ -26,23 +27,33 @@ pipeline {
             }
         }
         stage('deploy namespace') {
+            when {expression { !params.IS_SHUTDOWN }}
             steps {
                 script {
                     sh 'kubectl apply -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
                 }
             }
         }
-        stage('deploy postgres and its service') {
-            steps {
-                script {
-                    echo 'STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply'
-                    sh 'kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml'
+  
+    stage('deploy postgres and its service') {
+        when {expression { !params.IS_SHUTDOWN }}
+        steps {
+            script {
+                    sh'''#!/bin/bash
+                    source jenkins-flow-scripts/bash/kubernetes-utils.sh
+                    echo "STATEEFUL SET MUST BE DELETED AND CANNOT BE UPFATED - delete before apply"
+                                            #ELEMENTTYPE  #ELEMENT NAME   # NAMESPACE         #FILE FOR DELETE POD
+                    delete_active_element 'pods'         'postgres'        'semperis-ns'  './kubernetes/yaml-files/01-postgres.yaml' 
+                    kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
+                    '''
+
                 }
             }
         }
-        stage('deploy flask app with pre selected scale amount') {
-            steps {
-                script {
+    stage('deploy flask app with pre selected scale amount') {
+        when {expression { !params.IS_SHUTDOWN }}
+        steps {
+            script {
                     sh'''
                     cp ./kubernetes/yaml-files/02-flask.yaml .
                     sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
@@ -61,14 +72,18 @@ pipeline {
 
         stage('test sanity for K8 execution') 
         {
+
+            when {expression { !params.IS_SHUTDOWN }}
+
             steps {
                 script {
                         sh '''#!/bin/bash
                             source jenkins-flow-scripts/bash/kubernetes-utils.sh
                             endpoint=$(get_application_ip_and_port "web-app" "semperis-ns") 
+                            echo "  get_application_ip_and_port --> endpoint=$endpoint"
                             source jenkins-flow-scripts/bash/test-flask-app.sh
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
-                            validate_flask_in_loop     "$endpoint"              5               1             
+                            validate_flask_in_loop     "$endpoint"              10             3           
                         '''
                 }
             }
