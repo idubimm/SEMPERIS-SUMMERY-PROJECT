@@ -50,3 +50,17 @@ delete_active_element(){
       fi
 }		
 
+
+clear_pod_cache() {
+    appname=$1 
+    namespace=$2
+
+    #web-app semperis-ns
+    podname=get pods --namespace=$namespace | grep $appname | awk '{print $1}'
+    # if podname has value
+    if [ -n "$podname" ]; then   
+        kubectl delete pods -l app=$appname
+        minikube cache delete $podname
+        minikube cache reload
+    fi
+} 

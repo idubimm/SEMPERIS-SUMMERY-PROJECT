@@ -55,6 +55,8 @@ pipeline {
         steps {
             script {
                     sh'''
+                    source jenkins-flow-scripts/bash/kubernetes-utils.sh
+                    clear_pod_cache web-app semperis-ns
                     cp ./kubernetes/yaml-files/02-flask.yaml .
                     sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
                     kubectl apply -f 02-flask.yaml
