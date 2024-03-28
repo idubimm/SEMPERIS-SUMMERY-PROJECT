@@ -14,7 +14,7 @@ properties([  parameters([ choice(defaultValue: 1, name: 'REPLICAS',
 pipeline {
     agent any // Or specify a particular agent configuration
     stages {
-        stage('creating tunnel to support load balancer') {
+        stage('loading minikube if not woriking') {
             steps {
                 script {
                     sh '''#!/bin/bash
@@ -35,6 +35,7 @@ pipeline {
   
     stage('deploy postgres and its service') {
         steps {
+            if (!params.IS_SHUTDOWN ) {
             script {
                     '''#!/bin/bash
                     source jenkins-flow-scripts/bash/kubernetes-utils.sh
@@ -44,23 +45,35 @@ pipeline {
                     kubectl apply -f ./kubernetes/yaml-files/01-postgres.yaml
                     '''
                 }
+            } else {
+                        echo 'Skipping POSTGRES DEPLOYMENT due to deletion of k8 Namespace'
             }
         }
+    }
     stage('deploy flask app with pre selected scale amount') {
         steps {
-            script {
-                    sh'''
-                    cp ./kubernetes/yaml-files/02-flask.yaml .
-                    sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
-                    kubectl apply -f 02-flask.yaml
-                    '''
+            if (!params.IS_SHUTDOWN ) {
+                    script {
+                            sh'''
+                            cp ./kubernetes/yaml-files/02-flask.yaml .
+                            sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
+                            kubectl apply -f 02-flask.yaml
+                            '''
+                        } else {
+                                echo 'Skipping flask app DEPLOYMENT due to deletion of k8 Namespace'
+                        }
                 }
             }
         }
         stage('deploy LB service') {
             steps {
                 script {
+                    if (!params.IS_SHUTDOWN ) 
+                    {
                     sh 'kubectl apply -f ./kubernetes/yaml-files/03-services.yaml'
+                    } else {
+                            echo 'Skipping LB service deployment due to deletion of k8 Namespace'
+                    }
                 }
             }
         }
@@ -69,6 +82,7 @@ pipeline {
         {
             steps {
                 script {
+                       if (!params.IS_SHUTDOWN ) {
                         sh '''#!/bin/bash
                             source jenkins-flow-scripts/bash/kubernetes-utils.sh
                             endpoint=$(get_application_ip_and_port "web-app" "semperis-ns") 
@@ -76,10 +90,12 @@ pipeline {
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
                             validate_flask_in_loop     "$endpoint"              5               1             
                         '''
+                        } else {
+                                    echo 'Skipping tests due to deletion of k8 Namespace'
+                        }
                 }
-            }
+            }   
         }
-
         stage('delete deployment') {
             steps {
                 script {
@@ -89,7 +105,7 @@ pipeline {
                     sh 'kubectl delete -f ./kubernetes/yaml-files/01-postgres.yaml'
                     sh 'kubectl delete -f ./kubernetes/yaml-files/00-namespace-flask-python.yaml'
                      } else {
-                        echo 'Skipping seleting pods due to parameter'
+                        echo 'Skipping deletion pods due to parameter'
                      }
                 }
             }
