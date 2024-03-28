@@ -82,7 +82,7 @@ pipeline {
                             echo "  get_application_ip_and_port --> endpoint=$endpoint"
                             source jenkins-flow-scripts/bash/test-flask-app.sh
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
-                            validate_flask_in_loop     "$endpoint"              10             2           
+                            validate_flask_in_loop     "$endpoint"              10             3           
                         '''
                 }
             }
