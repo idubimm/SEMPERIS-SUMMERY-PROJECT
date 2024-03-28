@@ -57,8 +57,10 @@ clear_pod_cache() {
 
     #web-app semperis-ns
     podname=get pods --namespace=$namespace | grep $appname | awk '{print $1}'
+    echo "clear_pod_cache  ==> podname=$podname"
     # if podname has value
     if [ -n "$podname" ]; then   
+        echo "clear_pod_cache  ==> podname=$podname   ==> inside if"
         kubectl delete pods -l app=$appname
         minikube cache delete $podname
         minikube cache reload
