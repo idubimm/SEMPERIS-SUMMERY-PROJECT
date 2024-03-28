@@ -183,6 +183,9 @@ def execute_subprocess_command(command):
 
 
 def create_docker_image_tag_for_push(user, repo_name, tag, latest_fraze):
+    print(
+        f"create_docker_image_tag_for_push ==> repo_name {repo_name}  ,tag {tag} , latest_fraze {latest_fraze}   "
+    )
     tag_name = get_repo_name_with_tag(user, repo_name, tag)
     tag_name_lts = get_repo_name_latest_tag(user, repo_name, latest_fraze)
     local_image_tag_name = f"{user}/{repo_name}:{latest_fraze}"

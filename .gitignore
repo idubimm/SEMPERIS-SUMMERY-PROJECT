@@ -13,6 +13,7 @@ __pycache__/
 resources/
 postgres/
 /ignore/
+/.ignore/
 
 # Docker
 .docker/

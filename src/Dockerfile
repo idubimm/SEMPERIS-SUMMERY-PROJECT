@@ -12,7 +12,7 @@ ENV DB_USER=idubi
 ENV DB_PASSWORD=idubi
 ENV DB_NAME=idubi
 ENV DB_TYPE=postgresql
-ENV DB_HOST=$DB_HOST
+ENV DB_HOST='$DB_HOST'
 # win : DB_HOST=host.docker.internal
 # lin : DB_HOST=172.17.0.1
 
