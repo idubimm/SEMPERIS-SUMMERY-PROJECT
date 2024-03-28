@@ -104,7 +104,7 @@ pipeline {
                         sh '''#!/bin/bash
                             source jenkins-flow-scripts/bash/test-flask-app.sh
                                                     [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
-                            validate_flask_in_loop "http://127.0.0.1:5000"     5               1  
+                            validate_flask_in_loop "http://127.0.0.1:5000"     10               1  
                             source jenkins-flow-scripts/bash/docker-utils.sh
                             stop_docker_compose 'src/docker-compose-image.yml' "$DOMAIN/$REPONAME:0.0.0"  'flask-compose'
                         '''                        

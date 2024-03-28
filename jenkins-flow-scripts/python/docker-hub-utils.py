@@ -139,7 +139,6 @@ def evaluate_tag_name(tag_name):
     tag_elements = tag_name.split(".")
     tag_elements.reverse()
     value = sum(int(element) * (10000) ** i for i, element in enumerate(tag_elements))
-    # print(f'evaluating {tag_name} ==> {value}')
     return value
 
 
@@ -188,7 +187,7 @@ def create_docker_image_tag_for_push(user, repo_name, tag, latest_fraze):
     )
     tag_name = get_repo_name_with_tag(user, repo_name, tag)
     tag_name_lts = get_repo_name_latest_tag(user, repo_name, latest_fraze)
-    local_image_tag_name = f"{user}/{repo_name}:{latest_fraze}"
+    local_image_tag_name = f"{repo_name}:0.0.0"
     execute_subprocess_command(f"docker tag {local_image_tag_name} {tag_name} ")
     execute_subprocess_command(f"docker tag {local_image_tag_name} {tag_name_lts} ")
     pushed_image = execute_subprocess_command(f"docker push {tag_name}")
@@ -202,6 +201,7 @@ def create_docker_image_tag_for_push(user, repo_name, tag, latest_fraze):
 
 def delete_old_images(user, repo_name, control_obj, latest_fraze):
     tags_to_delete = control_obj["tags_to_delete"]
+
     token = DOCKER_RESPONSE["TOKEN"]
     failed_list = []
     for tag_reference in tags_to_delete:
@@ -285,14 +285,14 @@ def push_docker_repo_to_hub(
 arg = sys.argv
 
 # this file is executed with this parameters from jenklins , also a debug file exist with execution params
-# push_docker_repo_to_hub(
-#     user=arg[1],
-#     password=arg[2],
-#     repo_name=arg[3],
-#     build_incremental_type=arg[4],
-#     number_builds_2keep=arg[5],
-#     latest_fraze=arg[6],
-# )
+push_docker_repo_to_hub(
+    user=arg[1],
+    password=arg[2],
+    repo_name=arg[3],
+    build_incremental_type=arg[4],
+    number_builds_2keep=arg[5],
+    latest_fraze=arg[6],
+)
 
 # push_docker_repo_to_hub(
 #     user="idubi",
@@ -308,5 +308,6 @@ arg = sys.argv
 #     repo_name="flask-crud",
 #     build_incremental_type="BUILD",
 #     number_builds_2keep="4",
+#     latest_fraze="lts",
 # )
-create_docker_image_tag_for_push("idubi", "flask-crud", "0.0.1", "lts")
+# create_docker_image_tag_for_push("idubi", "flask-crud", "0.0.1", "lts")
