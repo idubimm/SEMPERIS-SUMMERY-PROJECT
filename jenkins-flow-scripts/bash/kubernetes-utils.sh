@@ -68,8 +68,9 @@ clear_pod_cache() {
         echo "current pod is $currentpod" 
         echo "deleting pod ...$currentpod "
         kubectl delete pods -l app=$appname --namespace=$namespace 
-        minikube cache delete 
-        minikube cache reload
+        # minikube cache delete 
+        # minikube cache reload
+        sleep 10
         newpod=$(kubectl get pods --namespace=${namespace} | grep ${appname} | awk '{print $1}')
         echo "replaced $currentpod with $newpod" 
         echo `kubectl get pod ${newpod} --namespace=semperis-ns  -o json`
