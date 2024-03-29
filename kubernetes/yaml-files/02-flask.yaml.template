@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  namespace: semperis-ns
+spec:
+  selector:
+    matchLabels: 
+      app: web-app
+  replicas: REPLICAS
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+      - name: web-app
+        image: idubi/flask-crud:lts
+        imagePullPolicy: Always
+        env:
+        - name: DB_USER
+          value: "idubi"
+        - name: DB_PASSWORD
+          value: "idubi"
+        - name: DB_NAME
+          value: "idubi"
+        - name: DB_TYPE
+          value: "postgresql"
+        - name: DB_HOST
+          value: "postgres-db"
+        - name: DB_PORT
+          value: "5432"
+        ports:
+        - containerPort: 5000
