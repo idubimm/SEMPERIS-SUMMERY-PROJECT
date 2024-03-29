@@ -24,16 +24,21 @@ start_minikube_tunel_if_stopped() {
     fi
 } 
 
-get_application_ip_and_port(){
+get_application_endpoint(){
     serviceName=$1
     namespace=$2
-    # echo $namespace
-    # echo $serviceName
-    minikubeip=$(minikube ip)
-    # echo "minikubeip  -->  $minikubeip"
-    port=$(kubectl get svc --namespace=$namespace | awk '//{split($5,a,":|/"); print a[2]}' |grep -Eo '[0-9]+')
-    # echo "port  -->  $port"
-    echo "$minikubeip:$port"
+
+    serviceRecord=$(kubectl get svc --namespace=$namespace |grep LoadBalancer)
+    # echo "serviceRecord ==> $serviceRecord"
+    ip=$(echo $serviceRecord | awk '{print $4}')
+    # echo "ip ==> $ip"
+    portField=$(echo $serviceRecord | awk '{print $5}')
+    # echo "portField  -->  $portField"
+    port=$(echo $portField |awk '{ split($0,a,/:/) ; print a[1]}')
+    # echo "port => $port "
+
+    # echo "return : $ip:$port"
+    echo "$ip:$port"
 }
  
 delete_active_element(){
