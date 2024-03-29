@@ -92,7 +92,13 @@ pipeline {
                             echo "  get_application_endpoint --> endpoint=$endpoint"
                             source jenkins-flow-scripts/bash/test-flask-app.sh
                             #                       [1.flask app endpoint]   [2.#retries]  [3.interval secconds]
-                            validate_flask_in_loop     "$endpoint"              10            5          
+                            validate_flask_in_loop     "$endpoint"              20            5          
+                            endpoint=$(get_application_endpoint "web-app" "semperis-ns") 
+                            echo "  get_application_endpoint --> endpoint=$endpoint"
+                            validate_flask_in_loop     "$endpoint"              5             2         
+
+                            
+
                         '''
                 }
             }
