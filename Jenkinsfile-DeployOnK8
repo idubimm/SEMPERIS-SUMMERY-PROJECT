@@ -62,6 +62,7 @@ pipeline {
                         sleep 20
                     else 
                         cp ./kubernetes/yaml-files/02-flask.yaml.template ./02-flask.yaml
+                        chmod 777 02-flask.yaml
                         sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
                         kubectl apply -f ./02-flask.yaml
                     fi
