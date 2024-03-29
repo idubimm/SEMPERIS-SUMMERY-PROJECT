@@ -66,7 +66,7 @@ clear_pod_cache() {
         minikube cache delete 
         minikube cache reload
         newpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
-        echo "replaced $(currentpod) with $(newpod)" 
+        echo "replaced $currentpod with ($newpod)" 
         echo `kubectl get pod ${newpod} --namespace=semperis-ns  -o yaml`
     else
          echo "pod not exist , no need to clean"         
