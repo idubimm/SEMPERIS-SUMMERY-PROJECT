@@ -60,12 +60,12 @@ pipeline {
                     if [ "$REPLICAS" = "1" ]; then
                         clear_pod_cache web-app semperis-ns
                         sleep 20
-                        kubectl apply -f ./kubernetes/yaml-files/ 
                     else 
                         cp ./kubernetes/yaml-files/02-flask.yaml.template ./02-flask.yaml
                         sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
                         kubectl apply -f 02-flask.yaml
                     fi
+                    kubectl apply -f ./kubernetes/yaml-files/ 
                     '''
                 }
             }
