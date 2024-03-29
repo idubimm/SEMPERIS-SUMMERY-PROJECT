@@ -68,7 +68,7 @@ clear_pod_cache() {
         newpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
         echo "replaced ${currentpod} with ${currentpod}" 
         echo `kubectl get pod ${newpod} --namespace=semperis-ns  -o yaml`
-    else;
+    else
          echo "pod not exist , no need to clean"         
     fi
 } 
