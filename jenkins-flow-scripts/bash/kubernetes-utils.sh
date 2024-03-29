@@ -57,18 +57,18 @@ clear_pod_cache() {
     #web-app semperis-ns
     podname=$(kubectl get pods --namespace=$namespace | grep $appname | awk '{print $1}')
     echo "clear_pod_cache  ==> podname=$podname"
-    # if podname has value
-    # if [ -n "$podname" ]; then  
-    #     currentpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
-    #     echo "current pod is $(currentpod)" 
-    #     echo "deleting pod ...$(currentpod) "
-    #     kubectl delete pods -l app=$appname --namespace=$namespace 
-    #     minikube cache delete 
-    #     minikube cache reload
-    #     newpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
-    #     echo "replaced $(currentpod) with $(newpod)" 
-    #     echo `kubectl get pod ${newpod} --namespace=semperis-ns  -o yaml`
-    # else
-    #      echo "pod not exist , no need to clean"         
-    # fi
+    if podname has value
+    if [ -n "$podname" ]; then  
+        currentpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
+        echo "current pod is $(currentpod)" 
+        echo "deleting pod ...$(currentpod) "
+        kubectl delete pods -l app=$appname --namespace=$namespace 
+        minikube cache delete 
+        minikube cache reload
+        newpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
+        echo "replaced $(currentpod) with $(newpod)" 
+        echo `kubectl get pod ${newpod} --namespace=semperis-ns  -o yaml`
+    else
+         echo "pod not exist , no need to clean"         
+    fi
 } 
