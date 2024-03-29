@@ -57,10 +57,9 @@ pipeline {
             script {
                     sh'''#!/bin/bash
                     source jenkins-flow-scripts/bash/kubernetes-utils.sh
-                    if [ "$REPLICAS" -ne "1" ];
+                    if [ "$REPLICAS" = "1" ];
                         clear_pod_cache web-app semperis-ns
                         sleep 10
-
                     else 
                         cp ./kubernetes/yaml-files/02-flask.yaml .
                         sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
