@@ -59,9 +59,10 @@ pipeline {
                     source jenkins-flow-scripts/bash/kubernetes-utils.sh
                     if [ "$REPLICAS" = "1" ]; then
                         clear_pod_cache web-app semperis-ns
-                        sleep 10
+                        sleep 20
+                        kubectl apply -f ./kubernetes/yaml-files/ 
                     else 
-                        cp ./kubernetes/yaml-files/02-flask.yaml .
+                        cp ./kubernetes/yaml-files/02-flask.yaml.template ./02-flask.yaml
                         sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
                         kubectl apply -f 02-flask.yaml
                     fi
@@ -86,7 +87,8 @@ pipeline {
                 script {
                         sh '''#!/bin/bash
                             source jenkins-flow-scripts/bash/kubernetes-utils.sh
-                            endpoint=$(get_application_endpoint "web-app" "semperis-ns") 
+                            #  endpoint=$(get_application_endpoint "web-app" "semperis-ns") 
+                            endpoint=$(get_minikube_ip_and_port_for_test "web-app" "semperis-ns") 
                             echo "  get_application_endpoint --> endpoint=$endpoint"
                             source jenkins-flow-scripts/bash/test-flask-app.sh
                             #                       [1.flask app endpoint]   [2.#retries]  [3.interval secconds]

@@ -78,3 +78,17 @@ clear_pod_cache() {
          echo "pod not exist , no need to clean"         
     fi
 } 
+
+
+			
+get_minikube_ip_and_port_for_test(){
+    serviceName=$1
+    namespace=$2
+    # echo $namespace
+    # echo $serviceName
+    minikubeip=$(minikube ip)
+    # echo "minikubeip  -->  $minikubeip"
+    port=$(kubectl get svc --namespace=$namespace | awk '//{split($5,a,":|/"); print a[2]}' |grep -Eo '[0-9]+')
+    # echo "port  -->  $port"
+    echo "$minikubeip:$port"
+}			
