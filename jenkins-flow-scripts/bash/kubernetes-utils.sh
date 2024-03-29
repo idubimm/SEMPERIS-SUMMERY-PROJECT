@@ -60,8 +60,8 @@ clear_pod_cache() {
     # if podname has value
     if [ -n "$podname" ]; then  
         currentpod=$(kubectl get pods --namespace=${namepsce} | grep ${appname} | awk '{print $1}')
-        echo "current pod is $(currentpod)" 
-        echo "deleting pod ...$(currentpod) "
+        echo "current pod is $currentpod" 
+        echo "deleting pod ...$currentpod "
         kubectl delete pods -l app=$appname --namespace=$namespace 
         minikube cache delete 
         minikube cache reload
