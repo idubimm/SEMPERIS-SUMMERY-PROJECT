@@ -63,8 +63,8 @@ pipeline {
                     else 
                         cp ./kubernetes/yaml-files/02-flask.yaml.template ./02-flask.yaml
                         chmod 777 02-flask.yaml
-                        echo "CHMOD"
                         sed -i "s/REPLICAS/${REPLICAS}/g" 02-flask.yaml
+                        echo "executing pod with $REPLICAS replicas "
                         kubectl apply -f ./02-flask.yaml
                     fi
                     kubectl apply -f ./kubernetes/yaml-files/ 
